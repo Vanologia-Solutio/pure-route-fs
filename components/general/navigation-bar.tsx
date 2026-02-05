@@ -1,7 +1,13 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { BadgeHelp, MessageCircle, ShoppingCart, Store } from 'lucide-react'
+import {
+  BadgeHelp,
+  MessageCircle,
+  ShoppingCart,
+  Store,
+  User,
+} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -43,9 +49,10 @@ export default function NavigationBar() {
             </Button>
           ))}
         </div>
-        <div className='relative'>
+        <div className='relative flex items-center gap-4'>
           <Button
             variant='ghost'
+            size='icon'
             className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all relative'
           >
             <span className='relative flex items-center'>
@@ -57,7 +64,14 @@ export default function NavigationBar() {
                 3
               </span>
             </span>
-            <span className='ml-1'>Cart</span>
+          </Button>
+          <Button
+            variant='ghost'
+            className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all'
+            onClick={() => router.push('/login')}
+          >
+            <User className='size-5' />
+            Login
           </Button>
         </div>
       </div>

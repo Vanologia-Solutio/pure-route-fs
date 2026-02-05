@@ -38,7 +38,7 @@ export default function Features() {
         </div>
 
         <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
-          {features.map((feature, i) => {
+          {features.map(feature => {
             const Icon = feature.icon
             return (
               <Card
