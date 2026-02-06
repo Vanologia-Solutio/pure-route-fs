@@ -3,10 +3,10 @@ import {
   generateErrorResponse,
   generateSuccessResponse,
 } from '@/shared/helpers/api-response'
-import { NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const { name, username, email, password } = await req.json()
     if (!name || !username || !password) {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const { data: existingUser } = await sb
       .from('users')
       .select('id')
-      .or(`username.eq.${username},email.eq.${email}`)
+      .or(`username.eq.${username}, email.eq.${email}`)
       .maybeSingle()
     if (existingUser) {
       return NextResponse.json(generateErrorResponse('User already exists'), {

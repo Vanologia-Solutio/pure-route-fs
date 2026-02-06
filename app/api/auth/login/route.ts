@@ -6,9 +6,9 @@ import {
 } from '@/shared/helpers/api-response'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json()
     const sb = await getSupabaseServerClient()

@@ -17,7 +17,7 @@ export default function ShopPage() {
       </p>
       <Separator className='my-4 md:my-6' />
       {isLoading ? (
-        <div className='flex flex-col items-center justify-center gap-4'>
+        <div className='flex flex-col items-center justify-center gap-4 p-12'>
           <Loader2 className='size-16 animate-spin' />
           <p className='text-xl font-medium text-gray-500'>
             Loading products...
