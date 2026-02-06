@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -7,16 +9,35 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/shared/stores/auth-store'
+import { Loader2 } from 'lucide-react'
 import Image from 'next/image'
-import { ComponentProps } from 'react'
+import { ComponentProps, SubmitEvent } from 'react'
 
 export default function LoginForm({
   className,
   ...props
 }: ComponentProps<'div'>) {
+  const { isLoading, signIn } = useAuthStore()
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      const formData = new FormData(e.currentTarget)
+      const username = formData.get('username') as string
+      const password = formData.get('password') as string
+      const res = await signIn({ username, password })
+      if (res.success) {
+        window.location.href = '/shop'
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <form>
+      <form onSubmit={handleSubmit}>
         <FieldGroup>
           <div className='flex flex-col items-center gap-2 text-center'>
             <a
@@ -36,25 +57,37 @@ export default function LoginForm({
             </FieldDescription>
           </div>
           <Field>
-            <FieldLabel htmlFor='email'>Email</FieldLabel>
+            <FieldLabel htmlFor='username'>Username</FieldLabel>
             <Input
-              id='email'
-              type='email'
-              placeholder='m@example.com'
+              name='username'
+              id='username'
+              type='text'
+              placeholder='john.doe'
+              disabled={isLoading}
               required
             />
           </Field>
           <Field>
             <FieldLabel htmlFor='password'>Password</FieldLabel>
             <Input
+              name='password'
               id='password'
               type='password'
               placeholder='********'
+              minLength={8}
               required
+              disabled={isLoading}
             />
           </Field>
           <Field>
-            <Button type='submit'>Login</Button>
+            <Button
+              className='bg-green-700 text-white hover:bg-green-800'
+              type='submit'
+              disabled={isLoading}
+            >
+              {isLoading && <Loader2 className='w-4 h-4 animate-spin' />}
+              {isLoading ? 'Logging in...' : 'Login'}
+            </Button>
           </Field>
         </FieldGroup>
       </form>

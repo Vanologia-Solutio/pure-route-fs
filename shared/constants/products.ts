@@ -14,7 +14,8 @@ export const products: Product[] = [
     category: 'vial',
     price: 90,
     description: 'Research-grade Retatrutide peptide, 10mg per vial.',
-    imgUrl: '/reta_10mg.png',
+    imgUrl:
+      'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/reta_10mg.webp',
   },
   {
     id: 2,
@@ -22,7 +23,8 @@ export const products: Product[] = [
     category: 'vial',
     price: 100,
     description: 'Research-grade Retatrutide peptide, 20mg per vial.',
-    imgUrl: '/reta_20mg.png',
+    imgUrl:
+      'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/reta_20mg.webp',
   },
   {
     id: 3,
@@ -30,7 +32,8 @@ export const products: Product[] = [
     category: 'vial',
     price: 110,
     description: 'Higher dosage Retatrutide, ideal for advanced research.',
-    imgUrl: '/reta_30mg.png',
+    imgUrl:
+      'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/reta_30mg.webp',
   },
   {
     id: 4,
@@ -38,7 +41,8 @@ export const products: Product[] = [
     category: 'vial',
     price: 50,
     description: 'Copper peptide GHK-Cu, 50mg per vial for laboratory use.',
-    imgUrl: '/ghk_50mg.png',
+    imgUrl:
+      'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/ghk_50mg.webp',
   },
   {
     id: 5,
@@ -46,7 +50,8 @@ export const products: Product[] = [
     category: 'vial',
     price: 80,
     description: 'GHK-Cu high dose, research formula, 100mg per vial.',
-    imgUrl: '/ghk_100mg.png',
+    imgUrl:
+      'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/ghk_100mg.webp',
   },
   {
     id: 6,
@@ -55,6 +60,7 @@ export const products: Product[] = [
     price: 30,
     description:
       '3ml vial of bacteriostatic water, suitable for peptide reconstitution.',
-    imgUrl: '/water_3ml.png',
+    imgUrl:
+      'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/water_3ml.webp',
   },
 ]

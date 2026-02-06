@@ -1,8 +1,11 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/shared/stores/auth-store'
 import {
   BadgeHelp,
+  LayoutDashboard,
+  LogOut,
   MessageCircle,
   ShoppingCart,
   Store,
@@ -12,8 +15,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
 
 export default function NavigationBar() {
+  const { user, isAuthenticated, signOut } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -26,6 +36,11 @@ export default function NavigationBar() {
     },
     { label: 'FAQ', href: '/faq', icon: <BadgeHelp className='size-5' /> },
   ]
+
+  const handleLogout = () => {
+    signOut()
+    router.replace('/login')
+  }
 
   return (
     <nav className='sticky top-0 z-50 w-full bg-white shadow-md p-4'>
@@ -49,22 +64,48 @@ export default function NavigationBar() {
             </Button>
           ))}
         </div>
-        <div className='relative flex items-center gap-4'>
-          <Button
-            variant='ghost'
-            size='icon'
-            className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all relative'
-          >
-            <span className='relative flex items-center'>
-              <ShoppingCart className='size-5' />
-              <span
-                className='absolute -top-2 -right-2 inline-flex items-center justify-center px-1.5 rounded-full text-xs font-medium bg-green-700 text-white aspect-square'
-                style={{ minWidth: 18, height: 18 }}
-              >
-                3
+        {isAuthenticated ? (
+          <div className='flex items-center gap-4'>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all relative'
+            >
+              <span className='relative flex items-center'>
+                <ShoppingCart className='size-5' />
+                <span
+                  className='absolute -top-2 -right-2 inline-flex items-center justify-center px-1.5 rounded-full text-xs font-medium bg-green-700 text-white aspect-square'
+                  style={{ minWidth: 18, height: 18 }}
+                >
+                  3
+                </span>
               </span>
-            </span>
-          </Button>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant='ghost'
+                  className='text-base font-medium hover:text-green-700 duration-250 transition-all'
+                >
+                  <User className='size-5' />
+                  {user?.name.split(' ')[0]}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {user?.attrs.role.toLowerCase() === 'administrator' && (
+                  <DropdownMenuItem>
+                    <LayoutDashboard className='size-4' />
+                    Go to Admin Panel
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className='size-4' />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
           <Button
             variant='ghost'
             className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all'
@@ -73,7 +114,7 @@ export default function NavigationBar() {
             <User className='size-5' />
             Login
           </Button>
-        </div>
+        )}
       </div>
     </nav>
   )

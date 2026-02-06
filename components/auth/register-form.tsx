@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -7,16 +9,44 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/shared/stores/auth-store'
+import { Loader2 } from 'lucide-react'
 import Image from 'next/image'
-import { ComponentProps } from 'react'
+import { ComponentProps, SubmitEvent } from 'react'
 
 export default function RegisterForm({
   className,
   ...props
 }: ComponentProps<'div'>) {
+  const { register, isLoading } = useAuthStore()
+
+  const handleRegister = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      const name = formData.get('name') as string
+      const username = formData.get('username') as string
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+
+      const res = await register({
+        name,
+        username,
+        email,
+        password,
+      })
+      if (res.success) {
+        window.location.href = '/login'
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <form>
+      <form onSubmit={handleRegister}>
         <FieldGroup>
           <div className='flex flex-col items-center gap-2 text-center'>
             <a
@@ -37,28 +67,57 @@ export default function RegisterForm({
           </div>
           <Field>
             <FieldLabel htmlFor='name'>Name</FieldLabel>
-            <Input id='name' type='text' placeholder='John Doe' required />
+            <Input
+              name='name'
+              id='name'
+              type='text'
+              placeholder='John Doe'
+              disabled={isLoading}
+              required
+            />
           </Field>
           <Field>
-            <FieldLabel htmlFor='email'>Email</FieldLabel>
+            <FieldLabel htmlFor='username'>Username</FieldLabel>
             <Input
+              name='username'
+              id='username'
+              type='text'
+              placeholder='john.doe'
+              disabled={isLoading}
+              required
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor='email'>Email (optional)</FieldLabel>
+            <Input
+              name='email'
               id='email'
               type='email'
-              placeholder='m@example.com'
-              required
+              placeholder='john.doe@example.com'
+              disabled={isLoading}
             />
           </Field>
           <Field>
             <FieldLabel htmlFor='password'>Password</FieldLabel>
             <Input
+              name='password'
               id='password'
               type='password'
               placeholder='********'
+              minLength={8}
               required
+              disabled={isLoading}
             />
           </Field>
           <Field>
-            <Button type='submit'>Register</Button>
+            <Button
+              className='bg-green-700 text-white hover:bg-green-800'
+              type='submit'
+              disabled={isLoading}
+            >
+              {isLoading && <Loader2 className='size-4 animate-spin' />}
+              {isLoading ? 'Registering...' : 'Register'}
+            </Button>
           </Field>
         </FieldGroup>
       </form>
