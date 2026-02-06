@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { cartQueries } from '@/hooks/use-cart'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Product } from '@/shared/types/product'
+import { formatCurrency } from '@/shared/utils/formatter'
 import { Minus, Plus, ShoppingCart } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import LoginAlert from '../general/login-alert'
@@ -93,11 +94,7 @@ export default function AddToCart({ product }: { product: Product }) {
         >
           <ShoppingCart className='size-4' />
           {addItem.isPending ? 'Adding...' : 'Add to Cart - '}
-          {!addItem.isPending &&
-            new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-            }).format(product.price * quantity)}
+          {!addItem.isPending && formatCurrency(product.price * quantity)}
         </Button>
       </div>
 

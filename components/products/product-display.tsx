@@ -17,6 +17,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Fragment, MouseEvent, useState } from 'react'
 import LoginAlert from '../general/login-alert'
+import { formatCurrency } from '@/shared/utils/formatter'
 
 export default function ProductDisplay({ products }: { products: Product[] }) {
   const router = useRouter()
@@ -75,10 +76,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
             <CardFooter>
               <div className='flex items-center justify-between w-full'>
                 <span className='text-xl font-bold text-green-700'>
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  }).format(product.price)}
+                  {formatCurrency(product.price)}
                 </span>
                 <Button
                   className='bg-green-700 text-white hover:bg-green-800'

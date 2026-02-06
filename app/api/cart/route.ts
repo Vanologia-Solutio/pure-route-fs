@@ -35,12 +35,14 @@ export async function GET(req: NextRequest) {
         product_id: string
         products: {
           name: string
+          description: string
           price: number
+          file_path: string
         }
       }[]
     > = await sb
       .from('cart_items')
-      .select('*, products!inner(name, price)')
+      .select('*, products!inner(name, description, price, file_path)')
       .eq('cart_id', cart.id)
       .order('product_id', { ascending: true })
 
@@ -52,8 +54,10 @@ export async function GET(req: NextRequest) {
             cartItems?.map(item => ({
               id: item.product_id,
               name: item.products.name,
+              description: item.products.description,
               quantity: item.quantity,
               price: item.products.price,
+              file_path: item.products.file_path,
             })) ?? [],
         },
         'Cart fetched successfully',

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { productQueries } from '@/hooks/use-products'
+import { formatCurrency } from '@/shared/utils/formatter'
 import { CheckCircle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
@@ -59,10 +60,7 @@ export default function ProductPage() {
           </h1>
           <div className='flex items-end gap-1.5'>
             <p className='text-3xl font-bold text-green-700 dark:text-green-400'>
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-              }).format(product?.price)}
+              {formatCurrency(product?.price ?? 0)}
             </p>
             <p className='text-gray-500'>/ {product?.category}</p>
           </div>

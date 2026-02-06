@@ -31,9 +31,8 @@ export default function NavigationBar() {
   const [cartSheetOpen, setCartSheetOpen] = useState(false)
 
   const { user, isAuthenticated, signOut } = useAuthStore()
-  const role = user?.attrs?.role?.toLowerCase() ?? ''
   const { data: cartDetails, isLoading: isCartLoading } =
-    cartQueries.useGetDetails(role)
+    cartQueries.useGetDetails()
 
   const navigationItems = [
     { label: 'Shop', href: '/shop', icon: <Store className='size-5' /> },
@@ -50,7 +49,7 @@ export default function NavigationBar() {
     router.replace('/login')
   }
 
-  const isAdmin = role === 'administrator'
+  const isAdmin = user?.attrs?.role?.toLowerCase() === 'administrator'
 
   return (
     <nav className='sticky top-0 z-50 w-full bg-white shadow-md p-4'>
@@ -97,7 +96,6 @@ export default function NavigationBar() {
                 <CartSheet
                   open={cartSheetOpen}
                   onOpenChange={setCartSheetOpen}
-                  role={role}
                 />
               </Fragment>
             )}

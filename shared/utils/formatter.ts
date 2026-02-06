@@ -15,12 +15,11 @@ export function formatNpwp(npwp: string): string {
 
 export function formatCurrency(
   amount: number,
-  locale: string = 'id-ID',
+  locale: string = 'en-US',
 ): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 2,
+    currency: 'USD',
   }).format(amount)
 }
 

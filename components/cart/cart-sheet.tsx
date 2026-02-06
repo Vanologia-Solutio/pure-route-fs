@@ -11,7 +11,9 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { cartQueries } from '@/hooks/use-cart'
-import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
+import { formatCurrency } from '@/shared/utils/formatter'
+import { CreditCard, Loader2, Minus, Plus, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -34,20 +36,11 @@ const QTY_DEBOUNCE = 250
 type CartSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  role: string
 }
 
-export default function CartSheet({
-  open,
-  onOpenChange,
-  role,
-}: CartSheetProps) {
+export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const router = useRouter()
-  const {
-    data: cartRes,
-    isLoading,
-    isFetching,
-  } = cartQueries.useGetDetails(role?.toLowerCase() ?? '')
+  const { data: cartRes, isLoading, isFetching } = cartQueries.useGetDetails()
 
   const { mutate: updateQty, isPending: isUpdatingQty } =
     cartQueries.useUpdateQuantity()
@@ -125,7 +118,7 @@ export default function CartSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side='right' showCloseButton>
+      <SheetContent side='right' className='sm:max-w-md' showCloseButton>
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription>
@@ -147,133 +140,148 @@ export default function CartSheet({
                   key={item.id}
                   className='flex flex-col gap-2 border-b border-border pb-4 last:border-0'
                 >
-                  <div className='flex justify-between gap-2'>
-                    <span className='font-semibold text-sm'>{item.name}</span>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          className='shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10 size-8'
-                          disabled={
-                            isUpdatingQty || isFetching || isRemovingItem
-                          }
-                          aria-label={`Remove ${item.name} from cart`}
-                        >
-                          <Trash2 className='size-4' />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent size='sm'>
-                        <AlertDialogHeader>
-                          <AlertDialogMedia className='bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive'>
-                            <Trash2 />
-                          </AlertDialogMedia>
-                          <AlertDialogTitle>
-                            Remove item from cart?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will remove {item.name} from your cart.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            variant='destructive'
-                            onClick={() => handleRemove(item.id)}
-                          >
-                            Remove
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                  <div className='flex items-center justify-between gap-2'>
-                    <div className='flex items-center gap-2'>
-                      <label htmlFor={`qty-${item.id}`} className='sr-only'>
-                        Quantity for {item.name}
-                      </label>
-                      <div className='flex items-center'>
-                        <Button
-                          type='button'
-                          size='icon'
-                          variant='outline'
-                          onClick={() =>
-                            handleQtyChangeAndUpdate(
-                              item.id,
-                              getQty(item.id, item.quantity) - 1,
-                              item.quantity,
-                            )
-                          }
-                          disabled={
-                            getQty(item.id, item.quantity) <= MIN_QTY ||
-                            isUpdatingQty ||
-                            isFetching ||
-                            isRemovingItem
-                          }
-                          className='rounded-r-none rounded-l-md size-8'
-                          aria-label={`Decrease quantity for ${item.name}`}
-                        >
-                          <Minus className='size-4' />
-                        </Button>
-                        <Input
-                          id={`qty-${item.id}`}
-                          type='number'
-                          min={MIN_QTY}
-                          max={MAX_QTY}
-                          value={getQty(item.id, item.quantity)}
-                          onChange={e => {
-                            const v = e.target.valueAsNumber
-                            if (!Number.isNaN(v)) {
-                              setLocalQty(prev => ({
-                                ...prev,
-                                [item.id]: Math.floor(v),
-                              }))
-                            }
-                          }}
-                          onBlur={() => handleQtyBlur(item.id, item.quantity)}
-                          className='w-16 h-8 text-center border-x-0 [appearance:textfield] rounded-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
-                          disabled={
-                            isUpdatingQty || isFetching || isRemovingItem
-                          }
-                        />
-                        <Button
-                          type='button'
-                          size='icon'
-                          variant='outline'
-                          onClick={() =>
-                            handleQtyChangeAndUpdate(
-                              item.id,
-                              getQty(item.id, item.quantity) + 1,
-                              item.quantity,
-                            )
-                          }
-                          disabled={
-                            getQty(item.id, item.quantity) >= MAX_QTY ||
-                            isUpdatingQty ||
-                            isFetching ||
-                            isRemovingItem
-                          }
-                          className='rounded-l-none rounded-r-md size-8'
-                          aria-label={`Increase quantity for ${item.name}`}
-                        >
-                          <Plus className='size-4' />
-                        </Button>
-                      </div>
+                  <div className='flex items-center gap-4 w-full'>
+                    <div className='flex items-center shrink-0'>
+                      <Image
+                        src={item.file_path}
+                        alt={item.name}
+                        width={60}
+                        height={60}
+                        className='rounded-md'
+                      />
                     </div>
-                    <span className='font-medium text-green-700 dark:text-green-400'>
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                      }).format(item.price * getQty(item.id, item.quantity))}
-                    </span>
+                    <div className='flex flex-col gap-2 w-full'>
+                      <div className='flex items-end justify-between gap-2'>
+                        <div className='flex flex-col items-start gap-0.5'>
+                          <p className='font-semibold text-sm'>{item.name}</p>
+                          <p className='text-xs text-muted-foreground line-clamp-1'>
+                            {item.description}
+                          </p>
+                        </div>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              className='shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10 size-8'
+                              disabled={
+                                isUpdatingQty || isFetching || isRemovingItem
+                              }
+                              aria-label={`Remove ${item.name} from cart`}
+                            >
+                              <Trash2 className='size-4' />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent size='sm'>
+                            <AlertDialogHeader>
+                              <AlertDialogMedia className='bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive'>
+                                <Trash2 />
+                              </AlertDialogMedia>
+                              <AlertDialogTitle>
+                                Remove item from cart?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will remove {item.name} from your cart.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                variant='destructive'
+                                onClick={() => handleRemove(item.id)}
+                              >
+                                Remove
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                      <div className='flex items-center justify-between gap-2'>
+                        <div className='flex items-center gap-2'>
+                          <label htmlFor={`qty-${item.id}`} className='sr-only'>
+                            Quantity for {item.name}
+                          </label>
+                          <div className='flex items-center'>
+                            <Button
+                              type='button'
+                              size='icon'
+                              variant='outline'
+                              onClick={() =>
+                                handleQtyChangeAndUpdate(
+                                  item.id,
+                                  getQty(item.id, item.quantity) - 1,
+                                  item.quantity,
+                                )
+                              }
+                              disabled={
+                                getQty(item.id, item.quantity) <= MIN_QTY ||
+                                isUpdatingQty ||
+                                isFetching ||
+                                isRemovingItem
+                              }
+                              className='rounded-r-none rounded-l-md size-8'
+                              aria-label={`Decrease quantity for ${item.name}`}
+                            >
+                              <Minus className='size-4' />
+                            </Button>
+                            <Input
+                              id={`qty-${item.id}`}
+                              type='number'
+                              min={MIN_QTY}
+                              max={MAX_QTY}
+                              value={getQty(item.id, item.quantity)}
+                              onChange={e => {
+                                const v = e.target.valueAsNumber
+                                if (!Number.isNaN(v)) {
+                                  setLocalQty(prev => ({
+                                    ...prev,
+                                    [item.id]: Math.floor(v),
+                                  }))
+                                }
+                              }}
+                              onBlur={() =>
+                                handleQtyBlur(item.id, item.quantity)
+                              }
+                              className='w-16 h-8 text-center border-x-0 [appearance:textfield] rounded-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                              disabled={
+                                isUpdatingQty || isFetching || isRemovingItem
+                              }
+                            />
+                            <Button
+                              type='button'
+                              size='icon'
+                              variant='outline'
+                              onClick={() =>
+                                handleQtyChangeAndUpdate(
+                                  item.id,
+                                  getQty(item.id, item.quantity) + 1,
+                                  item.quantity,
+                                )
+                              }
+                              disabled={
+                                getQty(item.id, item.quantity) >= MAX_QTY ||
+                                isUpdatingQty ||
+                                isFetching ||
+                                isRemovingItem
+                              }
+                              className='rounded-l-none rounded-r-md size-8'
+                              aria-label={`Increase quantity for ${item.name}`}
+                            >
+                              <Plus className='size-4' />
+                            </Button>
+                          </div>
+                        </div>
+                        <span className='font-medium text-green-700 dark:text-green-400'>
+                          {formatCurrency(
+                            item.price * getQty(item.id, item.quantity),
+                          )}
+                        </span>
+                      </div>
+                      <p className='text-xs text-muted-foreground'>
+                        {formatCurrency(item.price)} each
+                      </p>
+                    </div>
                   </div>
-                  <p className='text-xs text-muted-foreground'>
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(item.price)}{' '}
-                    each
-                  </p>
                 </li>
               ))}
             </ul>
@@ -284,10 +292,7 @@ export default function CartSheet({
             <div className='flex justify-between text-base font-semibold w-full'>
               <span>Subtotal</span>
               <span className='text-lg font-bold text-green-700'>
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                }).format(subtotal)}
+                {formatCurrency(subtotal)}
               </span>
             </div>
             <Button
@@ -295,6 +300,7 @@ export default function CartSheet({
               className='w-full bg-green-700 hover:bg-green-800'
               onClick={handleProceedToCheckout}
             >
+              <CreditCard className='size-4' />
               Proceed to Checkout
             </Button>
           </SheetFooter>

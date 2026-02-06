@@ -9,11 +9,10 @@ const CART_QUERY_KEYS = {
 export const cartQueries = {
   keys: CART_QUERY_KEYS,
 
-  useGetDetails: (role: string) =>
+  useGetDetails: () =>
     useQuery({
       queryKey: cartQueries.keys.getDetails(),
       queryFn: () => cartService.getCartDetails(),
-      enabled: role === 'user',
     }),
 
   useAddItem: () => {

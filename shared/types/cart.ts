@@ -3,7 +3,9 @@ export interface Cart {
   products: {
     id: string
     name: string
+    description: string
     quantity: number
     price: number
+    file_path: string
   }[]
 }
