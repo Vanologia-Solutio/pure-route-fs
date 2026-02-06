@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
       .from('cart_items')
       .select('*, products!inner(name, price)')
       .eq('cart_id', cart.id)
+      .order('product_id', { ascending: true })
 
     return NextResponse.json(
       generateSuccessResponse(
@@ -89,7 +90,6 @@ export async function POST(req: NextRequest) {
 
     const sb = await getSupabaseServerClient()
 
-    // Find or create active cart for this user
     const { data: carts, error: cartsError } = await sb
       .from('carts')
       .select('id')
@@ -124,7 +124,6 @@ export async function POST(req: NextRequest) {
       cartId = newCart.id as string
     }
 
-    // Check if item already exists in cart
     const { data: existingItems, error: existingError } = await sb
       .from('cart_items')
       .select('id, quantity')

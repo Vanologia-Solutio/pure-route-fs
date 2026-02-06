@@ -11,12 +11,25 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { cartQueries } from '@/hooks/use-cart'
-import { Minus, Plus, Trash2 } from 'lucide-react'
+import { Loader2, Minus, Plus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog'
 
 const MIN_QTY = 1
 const MAX_QTY = 99
+const QTY_DEBOUNCE = 250
 
 type CartSheetProps = {
   open: boolean
@@ -36,11 +49,14 @@ export default function CartSheet({
     isFetching,
   } = cartQueries.useGetDetails(role?.toLowerCase() ?? '')
 
-  const updateQty = cartQueries.useUpdateQuantity()
+  const { mutate: updateQty, isPending: isUpdatingQty } =
+    cartQueries.useUpdateQuantity()
   const { mutate: removeItem, isPending: isRemovingItem } =
     cartQueries.useRemoveItem()
 
   const [localQty, setLocalQty] = useState<Record<string, number>>({})
+
+  const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({})
 
   const cart = cartRes?.data ?? null
   const products = cart?.products ?? []
@@ -50,15 +66,34 @@ export default function CartSheet({
       localQty[productId] ?? defaultQty,
     [localQty],
   )
-  const setQty = useCallback((productId: string, value: number) => {
-    const clamped = Math.min(MAX_QTY, Math.max(MIN_QTY, value))
-    setLocalQty(prev => ({ ...prev, [productId]: clamped }))
-  }, [])
+
+  const handleQtyChangeAndUpdate = useCallback(
+    (productId: string, value: number, currentQty: number) => {
+      const clamped = Math.min(MAX_QTY, Math.max(MIN_QTY, value))
+      setLocalQty(prev => ({ ...prev, [productId]: clamped }))
+
+      if (debounceTimers.current[productId]) {
+        clearTimeout(debounceTimers.current[productId])
+      }
+
+      debounceTimers.current[productId] = setTimeout(() => {
+        if (clamped !== currentQty && clamped >= MIN_QTY) {
+          updateQty({ productId, quantity: clamped })
+        }
+        delete debounceTimers.current[productId]
+      }, QTY_DEBOUNCE)
+    },
+    [updateQty],
+  )
 
   const handleQtyBlur = (productId: string, currentQty: number) => {
+    if (debounceTimers.current[productId]) {
+      clearTimeout(debounceTimers.current[productId])
+      delete debounceTimers.current[productId]
+    }
     const value = getQty(productId, currentQty)
     if (value !== currentQty && value >= MIN_QTY) {
-      updateQty.mutate({ productId, quantity: value })
+      updateQty({ productId, quantity: value })
     }
     setLocalQty(prev => {
       const next = { ...prev }
@@ -66,6 +101,13 @@ export default function CartSheet({
       return next
     })
   }
+
+  useEffect(() => {
+    const timers = debounceTimers.current
+    return () => {
+      Object.values(timers).forEach(timer => clearTimeout(timer))
+    }
+  }, [])
 
   const handleRemove = (productId: string) => {
     removeItem(productId)
@@ -91,8 +133,11 @@ export default function CartSheet({
           </SheetDescription>
         </SheetHeader>
         <div className='flex-1 overflow-y-auto px-4'>
-          {isLoading || isFetching || isRemovingItem ? (
-            <p className='text-muted-foreground text-sm'>Loading cart...</p>
+          {isLoading ? (
+            <div className='flex flex-col gap-2 items-center justify-center h-full'>
+              <Loader2 className='size-12 animate-spin' />
+              <p className='text-muted-foreground'>Loading cart...</p>
+            </div>
           ) : products.length === 0 ? (
             <p className='text-muted-foreground text-sm'>Your cart is empty.</p>
           ) : (
@@ -103,17 +148,44 @@ export default function CartSheet({
                   className='flex flex-col gap-2 border-b border-border pb-4 last:border-0'
                 >
                   <div className='flex justify-between gap-2'>
-                    <span className='font-medium text-sm'>{item.name}</span>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8'
-                      onClick={() => handleRemove(item.id)}
-                      disabled={isRemovingItem}
-                      aria-label={`Remove ${item.name} from cart`}
-                    >
-                      <Trash2 className='size-4' />
-                    </Button>
+                    <span className='font-semibold text-sm'>{item.name}</span>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10 size-8'
+                          disabled={
+                            isUpdatingQty || isFetching || isRemovingItem
+                          }
+                          aria-label={`Remove ${item.name} from cart`}
+                        >
+                          <Trash2 className='size-4' />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent size='sm'>
+                        <AlertDialogHeader>
+                          <AlertDialogMedia className='bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive'>
+                            <Trash2 />
+                          </AlertDialogMedia>
+                          <AlertDialogTitle>
+                            Remove item from cart?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will remove {item.name} from your cart.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            variant='destructive'
+                            onClick={() => handleRemove(item.id)}
+                          >
+                            Remove
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                   <div className='flex items-center justify-between gap-2'>
                     <div className='flex items-center gap-2'>
@@ -126,11 +198,17 @@ export default function CartSheet({
                           size='icon'
                           variant='outline'
                           onClick={() =>
-                            setQty(item.id, getQty(item.id, item.quantity) - 1)
+                            handleQtyChangeAndUpdate(
+                              item.id,
+                              getQty(item.id, item.quantity) - 1,
+                              item.quantity,
+                            )
                           }
                           disabled={
                             getQty(item.id, item.quantity) <= MIN_QTY ||
-                            updateQty.isPending
+                            isUpdatingQty ||
+                            isFetching ||
+                            isRemovingItem
                           }
                           className='rounded-r-none rounded-l-md size-8'
                           aria-label={`Decrease quantity for ${item.name}`}
@@ -146,22 +224,34 @@ export default function CartSheet({
                           onChange={e => {
                             const v = e.target.valueAsNumber
                             if (!Number.isNaN(v)) {
-                              setQty(item.id, Math.floor(v))
+                              setLocalQty(prev => ({
+                                ...prev,
+                                [item.id]: Math.floor(v),
+                              }))
                             }
                           }}
                           onBlur={() => handleQtyBlur(item.id, item.quantity)}
                           className='w-16 h-8 text-center border-x-0 [appearance:textfield] rounded-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                          disabled={
+                            isUpdatingQty || isFetching || isRemovingItem
+                          }
                         />
                         <Button
                           type='button'
                           size='icon'
                           variant='outline'
                           onClick={() =>
-                            setQty(item.id, getQty(item.id, item.quantity) + 1)
+                            handleQtyChangeAndUpdate(
+                              item.id,
+                              getQty(item.id, item.quantity) + 1,
+                              item.quantity,
+                            )
                           }
                           disabled={
                             getQty(item.id, item.quantity) >= MAX_QTY ||
-                            updateQty.isPending
+                            isUpdatingQty ||
+                            isFetching ||
+                            isRemovingItem
                           }
                           className='rounded-l-none rounded-r-md size-8'
                           aria-label={`Increase quantity for ${item.name}`}

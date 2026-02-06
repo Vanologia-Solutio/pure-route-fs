@@ -1,15 +1,28 @@
-import { Info } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Dispatch, SetStateAction } from "react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogMedia, AlertDialogTitle } from "../ui/alert-dialog"
-import { Button } from "../ui/button"
+import { Info } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Dispatch, SetStateAction } from 'react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from '../ui/alert-dialog'
+import { Button } from '../ui/button'
 
 interface LoginAlertProps {
   loginOpen: boolean
   setLoginOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export default function LoginAlert({ loginOpen, setLoginOpen }: LoginAlertProps) {
+export default function LoginAlert({
+  loginOpen,
+  setLoginOpen,
+}: LoginAlertProps) {
   const router = useRouter()
 
   const handleGoToLogin = () => {

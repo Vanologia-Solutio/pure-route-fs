@@ -19,12 +19,12 @@ export default function CTA() {
     <section className='py-20 md:py-32 bg-linear-to-br from-blue-800 via-green-900 to-green-700'>
       <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
         <h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
-          Shop Premium Peptide Medicines Today
+          Shop Premium Peptide Compounds Today
         </h2>
 
         <p className='text-xl text-white/90 mb-12 max-w-3xl mx-auto'>
           Discover Pure Route Peptides, your trusted source for high-purity
-          peptide-based medicines. Browse our selection and order directly for
+          peptide-based compounds. Browse our selection and order directly for
           fast, reliable delivery straight to your facility.
         </p>
 
@@ -34,7 +34,7 @@ export default function CTA() {
             className='bg-white text-green-700 hover:bg-white/90 gap-2'
             onClick={handleGoToShop}
           >
-            Shop Medicines <ArrowRight className='size-4' />
+            Shop Compounds <ArrowRight className='size-4' />
           </Button>
           <Button
             size='lg'
