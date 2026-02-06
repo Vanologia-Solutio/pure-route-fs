@@ -12,7 +12,14 @@ import {
 } from '@/components/ui/sheet'
 import { cartQueries } from '@/hooks/use-cart'
 import { formatCurrency } from '@/shared/utils/formatter'
-import { CreditCard, Loader2, Minus, Plus, Trash2 } from 'lucide-react'
+import {
+  CreditCard,
+  Loader2,
+  Minus,
+  PackageOpen,
+  Plus,
+  Trash2,
+} from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -28,6 +35,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '../ui/empty'
 
 const MIN_QTY = 1
 const MAX_QTY = 99
@@ -132,7 +147,29 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
               <p className='text-muted-foreground'>Loading cart...</p>
             </div>
           ) : products.length === 0 ? (
-            <p className='text-muted-foreground text-sm'>Your cart is empty.</p>
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant='icon'>
+                  <PackageOpen />
+                </EmptyMedia>
+                <EmptyTitle>Your cart is empty</EmptyTitle>
+                <EmptyDescription>
+                  You haven&apos;t added any items to your cart yet. Get started
+                  by adding some items to your cart.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent className='flex-row justify-center gap-2'>
+                <Button
+                  className='bg-green-700 text-white hover:bg-green-800'
+                  onClick={() => {
+                    router.push('/shop')
+                    onOpenChange(false)
+                  }}
+                >
+                  Continue Shopping
+                </Button>
+              </EmptyContent>
+            </Empty>
           ) : (
             <ul className='space-y-4'>
               {products.map(item => (
