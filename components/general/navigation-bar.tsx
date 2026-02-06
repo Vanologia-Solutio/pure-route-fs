@@ -16,7 +16,7 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Button } from '../ui/button'
 import {
   DropdownMenu,
@@ -77,7 +77,7 @@ export default function NavigationBar() {
         {isAuthenticated ? (
           <div className='flex items-center gap-4'>
             {!isAdmin && (
-              <>
+              <Fragment>
                 <Button
                   variant='ghost'
                   size='icon'
@@ -99,7 +99,7 @@ export default function NavigationBar() {
                   onOpenChange={setCartSheetOpen}
                   role={role}
                 />
-              </>
+              </Fragment>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
