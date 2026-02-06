@@ -1,16 +1,5 @@
 'use client'
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,10 +12,11 @@ import {
 import { cartQueries } from '@/hooks/use-cart'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Product } from '@/shared/types/product'
-import { Info, ShoppingCart } from 'lucide-react'
+import { ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Fragment, MouseEvent, useState } from 'react'
+import LoginAlert from '../general/login-alert'
 
 export default function ProductDisplay({ products }: { products: Product[] }) {
   const router = useRouter()
@@ -54,11 +44,6 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
       { productId: String(productId), quantity: 1 },
       { onSettled: () => setAddingId(null) },
     )
-  }
-
-  const handleGoToLogin = () => {
-    setLoginOpen(false)
-    router.push('/login')
   }
 
   return (
@@ -112,27 +97,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
         ))}
       </div>
 
-      <AlertDialog open={loginOpen} onOpenChange={setLoginOpen}>
-        <AlertDialogContent size='sm'>
-          <AlertDialogHeader>
-            <AlertDialogMedia>
-              <Info />
-            </AlertDialogMedia>
-            <AlertDialogTitle>Login required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be logged in to add items to your cart.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Stay here</AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Button className='bg-green-700 text-white hover:bg-green-800' onClick={handleGoToLogin}>
-                Go to login
-              </Button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <LoginAlert loginOpen={loginOpen} setLoginOpen={setLoginOpen} />
     </Fragment>
   )
 }

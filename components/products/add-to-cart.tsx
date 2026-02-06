@@ -1,24 +1,13 @@
 'use client'
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cartQueries } from '@/hooks/use-cart'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Product } from '@/shared/types/product'
-import { Info, Minus, Plus, ShoppingCart } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Minus, Plus, ShoppingCart } from 'lucide-react'
 import { Fragment, useState } from 'react'
+import LoginAlert from '../general/login-alert'
 
 const MIN_QTY = 1
 const MAX_QTY = 99
@@ -28,7 +17,6 @@ export default function AddToCart({ product }: { product: Product }) {
   const [loginOpen, setLoginOpen] = useState(false)
   const addItem = cartQueries.useAddItem()
   const { isAuthenticated } = useAuthStore()
-  const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.valueAsNumber
@@ -55,11 +43,6 @@ export default function AddToCart({ product }: { product: Product }) {
       productId: String(product.id),
       quantity,
     })
-  }
-
-  const handleGoToLogin = () => {
-    setLoginOpen(false)
-    router.push('/login')
   }
 
   return (
@@ -118,27 +101,7 @@ export default function AddToCart({ product }: { product: Product }) {
         </Button>
       </div>
 
-      <AlertDialog open={loginOpen} onOpenChange={setLoginOpen}>
-        <AlertDialogContent size='sm'>
-          <AlertDialogHeader>
-            <AlertDialogMedia>
-              <Info />
-            </AlertDialogMedia>
-            <AlertDialogTitle>Login required</AlertDialogTitle>
-            <AlertDialogDescription>
-              You need to be logged in to add items to your cart.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Stay here</AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Button className='bg-green-700 text-white hover:bg-green-800' onClick={handleGoToLogin}>
-                Go to login
-              </Button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <LoginAlert loginOpen={loginOpen} setLoginOpen={setLoginOpen} />
     </Fragment>
   )
 }
