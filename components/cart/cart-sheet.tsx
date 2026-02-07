@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -336,9 +336,18 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
               size='lg'
               className='w-full bg-green-700 hover:bg-green-800'
               onClick={handleProceedToCheckout}
+              disabled={
+                isLoading || isFetching || isRemovingItem || isUpdatingQty
+              }
             >
-              <CreditCard className='size-4' />
-              Proceed to Checkout
+              {isLoading || isFetching || isRemovingItem || isUpdatingQty ? (
+                <Loader2 className='size-4 animate-spin' />
+              ) : (
+                <Fragment>
+                  <CreditCard className='size-4' />
+                  Proceed to Checkout
+                </Fragment>
+              )}
             </Button>
           </SheetFooter>
         )}

@@ -3,20 +3,37 @@
 import CheckoutForm from '@/components/checkout/checkout-form'
 import OrderSummary from '@/components/checkout/order-summary'
 import { cartQueries } from '@/hooks/use-cart'
-import { Fragment, useState } from 'react'
+import { masterDataQueries } from '@/hooks/use-master-data'
+import { CHECKOUT_LOV } from '@/shared/constants/checkout-lov'
+import { Fragment, SubmitEvent, useState } from 'react'
 
 export default function CheckoutPage() {
-  const [shipment, setShipment] = useState('standard')
-  const [payment, setPayment] = useState('card')
+  const [shipmentMethod, setShipmentMethod] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('')
 
   const { data: cartRes, isLoading: isLoadingCart } =
     cartQueries.useGetDetails()
   const items = cartRes?.data?.products ?? []
+  const { data: shipmentMethodsRes, isLoading: isLoadingShipmentMethods } =
+    masterDataQueries.useGetShipmentMethods()
+  const shipmentMethods = shipmentMethodsRes?.data ?? []
 
   const subtotal =
     items.reduce((sum, item) => sum + item.price * item.quantity, 0) ?? 0
-  const shipmentCost = shipment === 'express' ? 15 : 5
+  const shipmentCost = shipmentMethods.find(m => m.id === shipmentMethod)?.price ?? 0
   const total = subtotal + shipmentCost
+
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const formData = new FormData(form)
+    const orderSubmission = {
+      ...Object.fromEntries(formData.entries()),
+      shipmentMethod,
+      paymentMethod,
+    }
+    console.log(orderSubmission)
+  }
 
   return (
     <Fragment>
@@ -34,10 +51,14 @@ export default function CheckoutPage() {
       <div className='grid gap-6 lg:grid-cols-3'>
         <div className='lg:col-span-2'>
           <CheckoutForm
-            shipment={shipment}
-            setShipment={setShipment}
-            payment={payment}
-            setPayment={setPayment}
+            shipmentMethods={shipmentMethods}
+            shipmentMethod={shipmentMethod}
+            setShipmentMethod={setShipmentMethod}
+            paymentMethods={CHECKOUT_LOV.PAYMENT_METHODS}
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
+            onSubmit={handleSubmit}
+            states={{ isLoading: isLoadingCart || isLoadingShipmentMethods }}
           />
         </div>
 

@@ -1,4 +1,5 @@
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { CartStatus } from '@/shared/enums/status'
 import {
   generateErrorResponse,
   generateSuccessResponse,
@@ -7,25 +8,41 @@ import { isAuthFailed, requireAuth } from '@/shared/utils/auth'
 import { PostgrestSingleResponse } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
+async function getActiveCart(sb: any, userId: string) {
+  const { data: cart, error } = await sb
+    .from('carts')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .single()
+  return { cart, error }
+}
+
+async function updateCartTime(sb: any, cartId: string, userId: string) {
+  return await sb
+    .from('carts')
+    .update({
+      updated_by: userId,
+      last_updated: new Date().toISOString(),
+    })
+    .eq('id', cartId)
+}
+
 export async function GET(req: NextRequest) {
   try {
     const auth = requireAuth(req)
-    if (isAuthFailed(auth)) {
-      return auth
-    }
+    if (isAuthFailed(auth)) return auth
 
     const sb = await getSupabaseServerClient()
-
     const { data: cart } = await sb
       .from('carts')
-      .select('*')
+      .select('id')
       .eq('user_id', auth.sub)
       .eq('status', 'active')
       .single()
     if (!cart) {
       return NextResponse.json(generateSuccessResponse(null, 'Cart not found'))
     }
-
     const {
       data: cartItems,
     }: PostgrestSingleResponse<
@@ -46,19 +63,21 @@ export async function GET(req: NextRequest) {
       .eq('cart_id', cart.id)
       .order('product_id', { ascending: true })
 
+    const products =
+      cartItems?.map(item => ({
+        id: item.product_id,
+        name: item.products.name,
+        description: item.products.description,
+        quantity: item.quantity,
+        price: item.products.price,
+        file_path: item.products.file_path,
+      })) || []
+
     return NextResponse.json(
       generateSuccessResponse(
         {
           id: cart.id,
-          products:
-            cartItems?.map(item => ({
-              id: item.product_id,
-              name: item.products.name,
-              description: item.products.description,
-              quantity: item.quantity,
-              price: item.products.price,
-              file_path: item.products.file_path,
-            })) ?? [],
+          products,
         },
         'Cart fetched successfully',
       ),
@@ -78,44 +97,32 @@ export async function POST(req: NextRequest) {
     const auth = requireAuth(req)
     if (isAuthFailed(auth)) return auth
 
-    const body = await req.json()
-    const { productId, quantity } = body as {
+    const { productId, quantity } = (await req.json()) as {
       productId: string
       quantity?: number
     }
-
     if (!productId) {
       return NextResponse.json(generateErrorResponse('productId is required'), {
         status: 400,
       })
     }
 
-    const qty = typeof quantity === 'number' && quantity > 0 ? quantity : 1
-
+    const qty = Number.isFinite(quantity) && quantity! > 0 ? quantity! : 1
     const sb = await getSupabaseServerClient()
 
-    const { data: carts, error: cartsError } = await sb
-      .from('carts')
-      .select('id')
-      .eq('user_id', auth.sub)
-      .eq('status', 'active')
-      .limit(1)
-
-    if (cartsError) {
-      return NextResponse.json(generateErrorResponse(cartsError.message), {
-        status: 500,
-      })
-    }
-
-    let cartId = carts?.[0]?.id as string | undefined
+    const { cart } = await getActiveCart(sb, auth.sub)
+    let cartId = cart?.id
 
     if (!cartId) {
       const { data: newCart, error: createError } = await sb
         .from('carts')
-        .insert({ user_id: auth.sub, status: 'active' })
+        .insert({
+          user_id: auth.sub,
+          status: CartStatus.ACTIVE,
+          created_by: auth.sub,
+        })
         .select('id')
         .single()
-
       if (createError || !newCart) {
         return NextResponse.json(
           generateErrorResponse(
@@ -124,8 +131,7 @@ export async function POST(req: NextRequest) {
           { status: 500 },
         )
       }
-
-      cartId = newCart.id as string
+      cartId = newCart.id
     }
 
     const { data: existingItems, error: existingError } = await sb
@@ -142,12 +148,15 @@ export async function POST(req: NextRequest) {
     }
 
     const existingItem = existingItems?.[0]
-
     if (existingItem) {
       const newQty = existingItem.quantity + qty
       const { error: updateError } = await sb
         .from('cart_items')
-        .update({ quantity: newQty })
+        .update({
+          quantity: newQty,
+          updated_by: auth.sub,
+          last_updated: new Date().toISOString(),
+        })
         .eq('id', existingItem.id)
 
       if (updateError) {
@@ -160,6 +169,7 @@ export async function POST(req: NextRequest) {
         cart_id: cartId,
         product_id: productId,
         quantity: qty,
+        created_by: auth.sub,
       })
 
       if (insertError) {
@@ -167,6 +177,17 @@ export async function POST(req: NextRequest) {
           status: 500,
         })
       }
+    }
+
+    const { error: updateCartError } = await updateCartTime(
+      sb,
+      cartId,
+      auth.sub,
+    )
+    if (updateCartError) {
+      return NextResponse.json(generateErrorResponse(updateCartError.message), {
+        status: 500,
+      })
     }
 
     return NextResponse.json(
@@ -187,12 +208,11 @@ export async function PATCH(req: NextRequest) {
     const auth = requireAuth(req)
     if (isAuthFailed(auth)) return auth
 
-    const body = await req.json()
-    const { productId, quantity } = body as {
+    const { productId, quantity } = (await req.json()) as {
       productId: string
       quantity: number
     }
-    if (productId == null || typeof quantity !== 'number' || quantity < 1) {
+    if (!productId || typeof quantity !== 'number' || quantity < 1) {
       return NextResponse.json(
         generateErrorResponse('productId and quantity (>= 1) required'),
         { status: 400 },
@@ -200,25 +220,35 @@ export async function PATCH(req: NextRequest) {
     }
 
     const sb = await getSupabaseServerClient()
-    const { data: cart } = await sb
-      .from('carts')
-      .select('id')
-      .eq('user_id', auth.sub)
-      .eq('status', 'active')
-      .single()
+    const { cart } = await getActiveCart(sb, auth.sub)
     if (!cart) {
       return NextResponse.json(generateErrorResponse('Cart not found'), {
         status: 404,
       })
     }
 
-    const { error } = await sb
+    const { error: updateItemError } = await sb
       .from('cart_items')
-      .update({ quantity })
+      .update({
+        quantity,
+        updated_by: auth.sub,
+        last_updated: new Date().toISOString(),
+      })
       .eq('cart_id', cart.id)
       .eq('product_id', productId)
-    if (error) {
-      return NextResponse.json(generateErrorResponse(error.message), {
+    if (updateItemError) {
+      return NextResponse.json(generateErrorResponse(updateItemError.message), {
+        status: 500,
+      })
+    }
+
+    const { error: updateCartError } = await updateCartTime(
+      sb,
+      cart.id,
+      auth.sub,
+    )
+    if (updateCartError) {
+      return NextResponse.json(generateErrorResponse(updateCartError.message), {
         status: 500,
       })
     }
@@ -249,29 +279,35 @@ export async function DELETE(req: NextRequest) {
     }
 
     const sb = await getSupabaseServerClient()
-    const { data: cart } = await sb
-      .from('carts')
-      .select('id')
-      .eq('user_id', auth.sub)
-      .eq('status', 'active')
-      .single()
+    const { cart } = await getActiveCart(sb, auth.sub)
     if (!cart) {
       return NextResponse.json(generateErrorResponse('Cart not found'), {
         status: 404,
       })
     }
 
-    const { error } = await sb
+    const { error: deleteItemError } = await sb
       .from('cart_items')
       .delete()
       .eq('cart_id', cart.id)
       .eq('product_id', productId)
-
-    if (error) {
-      return NextResponse.json(generateErrorResponse(error.message), {
+    if (deleteItemError) {
+      return NextResponse.json(generateErrorResponse(deleteItemError.message), {
         status: 500,
       })
     }
+
+    const { error: updateCartError } = await updateCartTime(
+      sb,
+      cart.id,
+      auth.sub,
+    )
+    if (updateCartError) {
+      return NextResponse.json(generateErrorResponse(updateCartError.message), {
+        status: 500,
+      })
+    }
+
     return NextResponse.json(generateSuccessResponse(null, 'Cart item removed'))
   } catch (error) {
     return NextResponse.json(

@@ -28,37 +28,40 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { CHECKOUT_LOV } from '@/shared/constants/checkout-lov'
 import { useAuthStore } from '@/shared/stores/auth-store'
+import { ShipmentMethod } from '@/shared/types/master-data'
 import { formatCurrency } from '@/shared/utils/formatter'
 import { PackageCheck } from 'lucide-react'
 import { SubmitEvent } from 'react'
+import { Skeleton } from '../ui/skeleton'
 
 interface CheckoutFormProps {
-  shipment: string
-  setShipment: (v: string) => void
-  payment: string
-  setPayment: (v: string) => void
+  shipmentMethods: ShipmentMethod[]
+  shipmentMethod: string
+  setShipmentMethod: (v: string) => void
+  paymentMethods: { id: string; name: string }[]
+  paymentMethod: string
+  setPaymentMethod: (v: string) => void
+  onSubmit: (e: SubmitEvent<HTMLFormElement>) => void
+  states: {
+    isLoading: boolean
+  }
 }
 
 export default function CheckoutForm({
-  shipment,
-  setShipment,
-  payment,
-  setPayment,
+  shipmentMethods,
+  shipmentMethod,
+  setShipmentMethod,
+  paymentMethods,
+  paymentMethod,
+  setPaymentMethod,
+  onSubmit,
+  states,
 }: CheckoutFormProps) {
   const { user } = useAuthStore()
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const form = e.currentTarget
-    const formData = new FormData(form)
-    // Use formData as needed for order submission
-    console.log(Object.fromEntries(formData.entries()))
-  }
-
   return (
-    <form onSubmit={handleSubmit} className='space-y-6'>
+    <form onSubmit={onSubmit} className='space-y-6'>
       {/* Contact Information */}
       <Card>
         <CardHeader>
@@ -192,23 +195,32 @@ export default function CheckoutForm({
         </CardHeader>
         <CardContent>
           <RadioGroup
-            name='shipment'
-            value={shipment}
-            onValueChange={setShipment}
+            name='shipmentMethod'
+            value={shipmentMethod}
+            onValueChange={setShipmentMethod}
+            required
           >
-            {CHECKOUT_LOV.SHIPMENT_METHODS.map(method => (
-              <FieldLabel key={method.id} htmlFor={method.id}>
-                <Field orientation='horizontal'>
-                  <FieldContent>
-                    <FieldTitle>
-                      {method.name} ({formatCurrency(method.price)})
-                    </FieldTitle>
-                    <FieldDescription>{method.description}</FieldDescription>
-                  </FieldContent>
-                  <RadioGroupItem value={method.id} id={method.id} />
-                </Field>
-              </FieldLabel>
-            ))}
+            {states.isLoading ? (
+              <div className='flex flex-col gap-2'>
+                <Skeleton className='w-full h-10' />
+                <Skeleton className='w-full h-10' />
+                <Skeleton className='w-full h-10' />
+              </div>
+            ) : (
+              shipmentMethods.map(method => (
+                <FieldLabel key={method.id} htmlFor={method.id}>
+                  <Field orientation='horizontal'>
+                    <FieldContent>
+                      <FieldTitle>
+                        {method.code} ({formatCurrency(method.price)})
+                      </FieldTitle>
+                      <FieldDescription>{method.description}</FieldDescription>
+                    </FieldContent>
+                    <RadioGroupItem value={method.id} id={method.id} />
+                  </Field>
+                </FieldLabel>
+              ))
+            )}
           </RadioGroup>
         </CardContent>
       </Card>
@@ -224,11 +236,12 @@ export default function CheckoutForm({
         <CardContent>
           <Field>
             <RadioGroup
-              name='payment'
-              value={payment}
-              onValueChange={setPayment}
+              name='paymentMethod'
+              value={paymentMethod}
+              onValueChange={setPaymentMethod}
+              required
             >
-              {CHECKOUT_LOV.PAYMENT_METHODS.map(method => (
+              {paymentMethods.map(method => (
                 <FieldLabel key={method.id} htmlFor={method.id}>
                   <Field orientation='horizontal'>
                     <FieldContent>
@@ -248,6 +261,7 @@ export default function CheckoutForm({
         type='submit'
         size='lg'
         className='w-full bg-green-700 text-white hover:bg-green-800'
+        disabled={states.isLoading}
       >
         <PackageCheck className='size-4' />
         Place Order

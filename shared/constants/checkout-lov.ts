@@ -1,10 +1,3 @@
-type ShipmentMethod = {
-  id: string
-  name: string
-  description: string
-  price: number
-}
-
 type PaymentMethod = {
   id: string
   name: string
@@ -21,31 +14,10 @@ type State = {
 }
 
 export const CHECKOUT_LOV: {
-  SHIPMENT_METHODS: ShipmentMethod[]
   PAYMENT_METHODS: PaymentMethod[]
   COUNTRIES: Country[]
   STATES: State[]
 } = {
-  SHIPMENT_METHODS: [
-    {
-      id: 'standard',
-      name: 'UPS 2nd Day Air',
-      description: '5-7 business days',
-      price: 10,
-    },
-    {
-      id: 'express',
-      name: 'UPS Express',
-      description: '2-3 business days',
-      price: 15,
-    },
-    {
-      id: 'overnight',
-      name: 'UPS Overnight',
-      description: '1-2 business days',
-      price: 20,
-    },
-  ],
   PAYMENT_METHODS: [
     {
       id: 'card',
