@@ -12,12 +12,12 @@ import {
 import { cartQueries } from '@/hooks/use-cart'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Product } from '@/shared/types/product'
+import { formatCurrency } from '@/shared/utils/formatter'
 import { ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Fragment, MouseEvent, useState } from 'react'
 import LoginAlert from '../general/login-alert'
-import { formatCurrency } from '@/shared/utils/formatter'
 
 export default function ProductDisplay({ products }: { products: Product[] }) {
   const router = useRouter()
@@ -46,6 +46,8 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
       { onSettled: () => setAddingId(null) },
     )
   }
+
+  const isAnyAdding = addItem.isPending
 
   return (
     <Fragment>
@@ -81,11 +83,11 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
                 <Button
                   className='bg-green-700 text-white hover:bg-green-800'
                   type='button'
-                  disabled={addingId === product.id && addItem.isPending}
+                  disabled={isAnyAdding}
                   onClick={e => handleAddOneToCart(e, product.id)}
                 >
                   <ShoppingCart className='size-4 ' />
-                  {addingId === product.id && addItem.isPending
+                  {addingId === product.id && isAnyAdding
                     ? 'Adding...'
                     : 'Add to Cart'}
                 </Button>

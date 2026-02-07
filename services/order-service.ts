@@ -11,7 +11,6 @@ export class OrderService {
     payload: CreateOrderDto,
   ): Promise<ApiResponse<{ id: string }>> {
     try {
-      await new Promise(resolve => setTimeout(resolve, 10000))
       const res = await fetch('/api/orders', {
         method: 'POST',
         body: JSON.stringify(payload),
