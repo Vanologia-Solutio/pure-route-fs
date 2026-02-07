@@ -4,7 +4,9 @@ import CheckoutForm from '@/components/checkout/checkout-form'
 import OrderSummary from '@/components/checkout/order-summary'
 import { cartQueries } from '@/hooks/use-cart'
 import { masterDataQueries } from '@/hooks/use-master-data'
+import { orderQueries } from '@/hooks/use-order'
 import { CHECKOUT_LOV } from '@/shared/constants/checkout-lov'
+import { CreateOrderDto } from '@/shared/dtos/order'
 import { Fragment, SubmitEvent, useState } from 'react'
 
 export default function CheckoutPage() {
@@ -17,13 +19,16 @@ export default function CheckoutPage() {
   const { data: shipmentMethodsRes, isLoading: isLoadingShipmentMethods } =
     masterDataQueries.useGetShipmentMethods()
   const shipmentMethods = shipmentMethodsRes?.data ?? []
+  const { mutateAsync: createOrder, isPending: isLoadingCreateOrder } =
+    orderQueries.useCreate()
 
   const subtotal =
     items.reduce((sum, item) => sum + item.price * item.quantity, 0) ?? 0
-  const shipmentCost = shipmentMethods.find(m => m.id === shipmentMethod)?.price ?? 0
+  const shipmentCost =
+    shipmentMethods.find(m => m.id === shipmentMethod)?.fee ?? 0
   const total = subtotal + shipmentCost
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.currentTarget
     const formData = new FormData(form)
@@ -31,8 +36,16 @@ export default function CheckoutPage() {
       ...Object.fromEntries(formData.entries()),
       shipmentMethod,
       paymentMethod,
+    } as CreateOrderDto
+
+    try {
+      const res = await createOrder(orderSubmission)
+      if (res.success) {
+        console.log('Order created successfully')
+      }
+    } catch (error) {
+      console.error(error)
     }
-    console.log(orderSubmission)
   }
 
   return (
@@ -58,7 +71,11 @@ export default function CheckoutPage() {
             paymentMethod={paymentMethod}
             setPaymentMethod={setPaymentMethod}
             onSubmit={handleSubmit}
-            states={{ isLoading: isLoadingCart || isLoadingShipmentMethods }}
+            states={{
+              isCartLoading: isLoadingCart,
+              isShipmentMethodsLoading: isLoadingShipmentMethods,
+              isCreateOrderLoading: isLoadingCreateOrder,
+            }}
           />
         </div>
 

@@ -4,6 +4,6 @@ export type ShipmentMethod = {
   creation_date: string
   code: string
   description: string
-  price: number
+  fee: number
   is_active: boolean
 }

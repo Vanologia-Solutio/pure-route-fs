@@ -16,8 +16,8 @@ const MAX_QTY = 99
 export default function AddToCart({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(MIN_QTY)
   const [loginOpen, setLoginOpen] = useState(false)
-  const addItem = cartQueries.useAddItem()
   const { isAuthenticated } = useAuthStore()
+  const addItem = cartQueries.useAddItem()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.valueAsNumber
