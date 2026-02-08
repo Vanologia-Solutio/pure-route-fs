@@ -2,6 +2,7 @@
 
 import AdminOrderCard from '@/components/admin/order-card'
 import LoadingSpinner from '@/components/general/loader-spinner'
+import { Button } from '@/components/ui/button'
 import {
   Empty,
   EmptyDescription,
@@ -18,7 +19,6 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { adminOrderQueries } from '@/hooks/use-admin-order'
 import { cn } from '@/lib/utils'
 import { ScrollText, Users } from 'lucide-react'
@@ -155,24 +155,50 @@ export default function AdminPanelPage() {
         orders.
       </p>
       <Separator className='my-4 md:my-6' />
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList
-          className={cn('grid w-full', `grid-cols-${TAB_MENU_ITEMS.length}`)}
+      {/* Custom Responsive Tabs with shadcn small buttons */}
+      <div className='w-full'>
+        <div
+          className={cn(
+            'flex w-full rounded-lg bg-muted p-1.5 mb-2 gap-1.5',
+            TAB_MENU_ITEMS.length > 2 && 'overflow-x-auto',
+          )}
+          style={{
+            WebkitOverflowScrolling: 'touch',
+          }}
         >
           {TAB_MENU_ITEMS.map(item => (
-            <TabsTrigger key={item.value} value={item.value}>
-              {item.icon}
-              {item.label}
-            </TabsTrigger>
+            <Button
+              key={item.value}
+              variant={activeTab === item.value ? 'default' : 'ghost'}
+              size='sm'
+              className={cn(
+                'hover:bg-green-700/10 hover:text-green-700 focus:bg-green-700 focus:text-white w-48',
+                activeTab === item.value && 'bg-green-700 text-white shadow-sm',
+              )}
+              onClick={() => setActiveTab(item.value)}
+              aria-current={activeTab === item.value ? 'page' : undefined}
+              type='button'
+            >
+              <span className='mr-1'>{item.icon}</span>
+              <span>{item.label}</span>
+            </Button>
           ))}
-        </TabsList>
-        <TabsContent value='orders' className='mt-6'>
-          <OrdersTab />
-        </TabsContent>
-        <TabsContent value='users' className='mt-6'>
-          <p className='text-muted-foreground'>Users management coming soon.</p>
-        </TabsContent>
-      </Tabs>
+        </div>
+        <div>
+          {activeTab === 'orders' && (
+            <div className='mt-6'>
+              <OrdersTab />
+            </div>
+          )}
+          {activeTab === 'users' && (
+            <div className='mt-6'>
+              <p className='text-muted-foreground'>
+                Users management coming soon.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </Fragment>
   )
 }
