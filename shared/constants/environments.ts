@@ -16,7 +16,7 @@ export const Env: {
   TOKEN_NAME: process.env.NEXT_PUBLIC_TOKEN_NAME ?? '',
   TOKEN_EXPIRATION: process.env.NEXT_PUBLIC_TOKEN_EXPIRATION ?? '',
   HTTP_REQUEST_TIMEOUT: process.env.NEXT_PUBLIC_HTTP_REQUEST_TIMEOUT ?? '',
-  GMAIL_USER: process.env.GMAIL_USER ?? '',
-  GMAIL_PASSWORD: process.env.GMAIL_PASSWORD ?? '',
+  GMAIL_USER: process.env.NEXT_PUBLIC_GMAIL_USER ?? '',
+  GMAIL_PASSWORD: process.env.NEXT_PUBLIC_GMAIL_PASSWORD ?? '',
   JWT_SECRET: process.env.JWT_SECRET ?? '',
 }
