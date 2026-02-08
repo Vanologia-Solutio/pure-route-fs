@@ -22,7 +22,8 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import LoadingSpinner from '../general/loader-spinner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -142,10 +143,7 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
         </SheetHeader>
         <div className='flex-1 overflow-y-auto px-4'>
           {isLoading ? (
-            <div className='flex flex-col gap-2 items-center justify-center h-full'>
-              <Loader2 className='size-12 animate-spin' />
-              <p className='text-muted-foreground'>Loading cart...</p>
-            </div>
+            <LoadingSpinner message='Loading cart...' />
           ) : products.length === 0 ? (
             <Empty>
               <EmptyHeader>
@@ -343,11 +341,9 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
               {isLoading || isFetching || isRemovingItem || isUpdatingQty ? (
                 <Loader2 className='size-4 animate-spin' />
               ) : (
-                <Fragment>
-                  <CreditCard className='size-4' />
-                  Proceed to Checkout
-                </Fragment>
+                <CreditCard className='size-4' />
               )}
+              Proceed to Checkout
             </Button>
           </SheetFooter>
         )}

@@ -5,6 +5,8 @@ export const Env: {
   TOKEN_NAME: string
   TOKEN_EXPIRATION: string
   HTTP_REQUEST_TIMEOUT: string
+  GMAIL_USER: string
+  GMAIL_PASSWORD: string
   JWT_SECRET: string
 } = {
   APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? '',
@@ -14,5 +16,7 @@ export const Env: {
   TOKEN_NAME: process.env.NEXT_PUBLIC_TOKEN_NAME ?? '',
   TOKEN_EXPIRATION: process.env.NEXT_PUBLIC_TOKEN_EXPIRATION ?? '',
   HTTP_REQUEST_TIMEOUT: process.env.NEXT_PUBLIC_HTTP_REQUEST_TIMEOUT ?? '',
+  GMAIL_USER: process.env.GMAIL_USER ?? '',
+  GMAIL_PASSWORD: process.env.GMAIL_PASSWORD ?? '',
   JWT_SECRET: process.env.JWT_SECRET ?? '',
 }

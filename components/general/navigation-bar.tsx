@@ -3,12 +3,14 @@
 import CartSheet from '@/components/cart/cart-sheet'
 import { cartQueries } from '@/hooks/use-cart'
 import { cn } from '@/lib/utils'
+import { Role } from '@/shared/enums/role'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import {
   BadgeHelp,
   LayoutDashboard,
   LogOut,
   MessageCircle,
+  ScrollText,
   ShoppingCart,
   Store,
   User,
@@ -49,7 +51,7 @@ export default function NavigationBar() {
     router.replace('/login')
   }
 
-  const isAdmin = user?.attrs?.role?.toLowerCase() === 'administrator'
+  const isAdmin = user?.attrs?.role?.toLowerCase() === Role.ADMINISTRATOR
 
   return (
     <nav className='sticky top-0 z-50 w-full bg-white shadow-md p-4'>
@@ -63,7 +65,7 @@ export default function NavigationBar() {
               key={item.href}
               variant='ghost'
               className={cn(
-                'text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all',
+                'text-base font-medium hover:text-green-700 hover:scale-105 duration-200 transition-all',
                 pathname === item.href && 'text-green-700',
               )}
               onClick={() => router.push(item.href)}
@@ -80,7 +82,7 @@ export default function NavigationBar() {
                 <Button
                   variant='ghost'
                   size='icon'
-                  className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all relative'
+                  className='text-base font-medium hover:text-green-700 hover:scale-105 duration-200 transition-all relative'
                   disabled={isCartLoading}
                   onClick={() => setCartSheetOpen(true)}
                 >
@@ -103,17 +105,22 @@ export default function NavigationBar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant='ghost'
-                  className='text-base font-medium hover:text-green-700 duration-250 transition-all'
+                  className='text-base font-medium hover:text-green-700 duration-200 transition-all'
                 >
                   <User className='size-5' />
                   {user?.name.split(' ')[0]}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {isAdmin && (
-                  <DropdownMenuItem>
+                {isAdmin ? (
+                  <DropdownMenuItem onClick={() => router.push('/admin/panel')}>
                     <LayoutDashboard className='size-4' />
                     Go to Admin Panel
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onClick={() => router.push('/orders')}>
+                    <ScrollText className='size-4' />
+                    Orders
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={handleLogout}>
@@ -126,7 +133,7 @@ export default function NavigationBar() {
         ) : (
           <Button
             variant='ghost'
-            className='text-base font-medium hover:text-green-700 hover:scale-105 duration-250 transition-all'
+            className='text-base font-medium hover:text-green-700 hover:scale-105 duration-200 transition-all'
             onClick={() => router.push('/login')}
           >
             <User className='size-5' />

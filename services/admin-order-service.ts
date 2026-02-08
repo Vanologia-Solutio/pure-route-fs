@@ -1,16 +1,38 @@
-import { CreateOrderDto } from '@/shared/dtos/order'
 import { ApiResponse } from '@/shared/helpers/api-response'
+import { PaginatedResponse } from '@/shared/helpers/api-response'
 import { Order } from '@/shared/types/order'
 import { getToken } from '@/shared/utils/token'
 
-export class OrderService {
+export type AdminOrderListItem = {
+  id: number
+  code: string
+  status: string
+  total_amount: number
+  creation_date: string
+  recipient_name: string
+  contact_info: string
+  country: string
+  address: string
+  city: string
+  state: string
+  postal_code: string
+}
+
+export class AdminOrderService {
   private headers() {
     return { Authorization: `Bearer ${getToken()}` }
   }
 
-  async getOrders(): Promise<ApiResponse<Order[]>> {
+  async getOrdersPaginated(
+    page: number = 1,
+    pageSize: number = 10,
+  ): Promise<PaginatedResponse<AdminOrderListItem>> {
     try {
-      const res = await fetch('/api/orders', {
+      const params = new URLSearchParams({
+        page: String(page),
+        pageSize: String(pageSize),
+      })
+      const res = await fetch(`/api/admin/orders?${params}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -26,9 +48,11 @@ export class OrderService {
     }
   }
 
-  async getOrderById(id: string): Promise<ApiResponse<Order>> {
+  async getOrderById(
+    id: string,
+  ): Promise<ApiResponse<Order & { items: unknown[] }>> {
     try {
-      const res = await fetch(`/api/orders/${id}`, {
+      const res = await fetch(`/api/admin/orders/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -44,17 +68,18 @@ export class OrderService {
     }
   }
 
-  async createOrder(
-    payload: CreateOrderDto,
-  ): Promise<ApiResponse<{ id: string }>> {
+  async updateOrderStatus(
+    id: string,
+    status: string,
+  ): Promise<ApiResponse<{ id: number; status: string }>> {
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        body: JSON.stringify(payload),
+      const res = await fetch(`/api/admin/orders/${id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           ...this.headers(),
         },
+        body: JSON.stringify({ status }),
       })
       return await res.json()
     } catch (error) {
@@ -66,4 +91,4 @@ export class OrderService {
   }
 }
 
-export const orderService = new OrderService()
+export const adminOrderService = new AdminOrderService()

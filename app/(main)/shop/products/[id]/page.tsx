@@ -1,42 +1,74 @@
 'use client'
 
+import LoadingSpinner from '@/components/general/loader-spinner'
 import AddToCart from '@/components/products/add-to-cart'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 import { Separator } from '@/components/ui/separator'
 import { productQueries } from '@/hooks/use-products'
+import { Role } from '@/shared/enums/role'
+import { useAuthStore } from '@/shared/stores/auth-store'
 import { formatCurrency } from '@/shared/utils/formatter'
-import { CheckCircle, Loader2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle, CircleQuestionMark } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
 export default function ProductPage() {
   const router = useRouter()
   const { id } = useParams()
+  const { user } = useAuthStore()
   const { data, isLoading } = productQueries.useGetById(id as string)
 
   if (isLoading) {
-    return (
-      <div className='flex flex-col items-center justify-center gap-4 p-12'>
-        <Loader2 className='size-16 animate-spin' />
-        <p className='text-xl font-medium text-gray-500'>Loading product...</p>
-      </div>
-    )
+    return <LoadingSpinner message='Loading product details...' />
   }
 
   if (!data?.data) {
     return (
-      <div className='flex flex-col items-center justify-center gap-4 p-12'>
-        <p className='text-xl font-medium text-gray-500'>Product not found</p>
-        <Button onClick={() => router.replace('/shop')}>Back to shop</Button>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant='icon'>
+            <CircleQuestionMark />
+          </EmptyMedia>
+          <EmptyTitle>Product not found</EmptyTitle>
+          <EmptyDescription>
+            The product you are looking for does not exist.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent className='flex-row justify-center gap-2'>
+          <Button
+            className='bg-green-700 text-white hover:bg-green-800'
+            onClick={() => router.push('/shop')}
+          >
+            Back to shop
+          </Button>
+        </EmptyContent>
+      </Empty>
     )
   }
 
   const { data: product } = data
+  const isAdmin = user?.attrs?.role?.toLowerCase() === Role.ADMINISTRATOR
 
   return (
-    <article className='w-full max-w-6xl mx-auto py-8'>
+    <article className='mx-auto w-full space-y-6'>
+      <Link
+        href='/shop'
+        className='inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground group'
+      >
+        <ArrowLeft className='size-4' />
+        Back to shop
+      </Link>
+
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-start'>
         <div className='relative aspect-square w-full min-h-[280px] md:min-h-0 rounded-xl overflow-hidden bg-muted shadow-lg'>
           <Image
@@ -83,8 +115,8 @@ export default function ProductPage() {
               </li>
             ))}
           </ul>
-          <Separator className='mb-8' />
-          <AddToCart product={product} />
+          <Separator className='mb-4 md:mb-8' />
+          {!isAdmin && <AddToCart product={product} />}
         </div>
       </div>
     </article>

@@ -3,8 +3,8 @@ import { Fragment } from 'react'
 export default function SupportPage() {
   return (
     <Fragment>
-      <h1 className='text-3xl font-bold mb-6'>Support</h1>
-      <p className='text-gray-500'>
+      <h1 className='text-2xl font-bold mb-4 md:text-3xl'>Support</h1>
+      <p className='text-muted-foreground'>
         If you have any questions or need assistance, please contact us at
       </p>
       <a

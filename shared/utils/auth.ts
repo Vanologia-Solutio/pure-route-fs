@@ -1,6 +1,7 @@
 import { Env } from '@/shared/constants/environments'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { NextRequest, NextResponse } from 'next/server'
+import { Role } from '../enums/role'
 import { generateErrorResponse } from '../helpers/api-response'
 
 export type AuthPayload = JwtPayload & {
@@ -44,4 +45,16 @@ export function isAuthFailed(
   res: AuthPayload | NextResponse,
 ): res is NextResponse {
   return res instanceof NextResponse
+}
+
+export function requireAdmin(req: NextRequest): AuthPayload | NextResponse {
+  const auth = requireAuth(req)
+  if (isAuthFailed(auth)) return auth
+  if (auth.attrs?.role.toLowerCase() !== Role.ADMINISTRATOR) {
+    return NextResponse.json(
+      generateErrorResponse('Forbidden: administrator only'),
+      { status: 403 },
+    )
+  }
+  return auth
 }

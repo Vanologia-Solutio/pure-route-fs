@@ -177,6 +177,7 @@ export default function CheckoutForm({
                   id='postalCode'
                   name='postalCode'
                   placeholder='Postal Code'
+                  maxLength={5}
                   defaultValue=''
                   disabled={isGlobalDisabled}
                   required

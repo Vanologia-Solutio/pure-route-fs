@@ -3,9 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Cart } from '@/shared/types/cart'
 import { formatCurrency } from '@/shared/utils/formatter'
-import { ChevronDown, Loader2 } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
+import LoadingSpinner from '../general/loader-spinner'
 
 interface OrderSummaryProps {
   items: Cart['products']
@@ -65,10 +66,7 @@ export default function OrderSummary({
       </CardHeader>
       <CardContent className='space-y-6'>
         {states.isLoading ? (
-          <div className='flex flex-col gap-2 items-center justify-center min-h-44'>
-            <Loader2 className='size-8 animate-spin' />
-            <p className='text-muted-foreground'>Loading order summary...</p>
-          </div>
+          <LoadingSpinner message='Loading order summary...' />
         ) : (
           <Fragment>
             <ItemsList items={items} />

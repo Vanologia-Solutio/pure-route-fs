@@ -1,3 +1,4 @@
+import { sendEmail } from '@/lib/mailer'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import { CartStatus, OrderStatus } from '@/shared/enums/status'
 import {
@@ -6,6 +7,42 @@ import {
 } from '@/shared/helpers/api-response'
 import { isAuthFailed, requireAuth } from '@/shared/utils/auth'
 import { NextRequest, NextResponse } from 'next/server'
+
+export async function GET(req: NextRequest) {
+  const auth = requireAuth(req)
+  if (isAuthFailed(auth)) return auth
+
+  try {
+    const sb = await getSupabaseServerClient()
+    const { data: orders, error } = await sb
+      .from('orders')
+      .select('*, shipment_methods!inner(code)')
+      .eq('user_id', auth.sub)
+      .order('creation_date', { ascending: false })
+
+    if (error) {
+      return NextResponse.json(generateErrorResponse(error.message), {
+        status: 500,
+      })
+    }
+
+    const resPayload = orders.map(order => ({
+      ...order,
+      shipment_method: order.shipment_methods.code,
+    }))
+
+    return NextResponse.json(
+      generateSuccessResponse(resPayload, 'Orders fetched successfully'),
+    )
+  } catch (error) {
+    return NextResponse.json(
+      generateErrorResponse(
+        error instanceof Error ? error.message : 'Failed to get orders',
+      ),
+      { status: 500 },
+    )
+  }
+}
 
 type CartItemWithProduct = {
   id: string
@@ -71,6 +108,11 @@ export async function POST(req: NextRequest) {
     }
 
     const shipmentMethodFee = shipmentMethodData.fee
+    const subtotalAmount = cartItems.reduce(
+      (acc, item) => acc + item.products.price * item.quantity,
+      0,
+    )
+    const totalAmount = subtotalAmount + shipmentMethodFee
 
     const { data: newOrder, error: newOrderError } = await sb
       .from('orders')
@@ -87,12 +129,10 @@ export async function POST(req: NextRequest) {
         shipment_method_id: shipmentMethod,
         delivery_fee_snapshot: shipmentMethodFee,
         payment_method: paymentMethod,
-        total_amount:
-          cartItems.reduce(
-            (acc, item) => acc + item.products.price * item.quantity,
-            0,
-          ) + shipmentMethodFee,
+        subtotal_amount: subtotalAmount,
+        total_amount: totalAmount,
         status: OrderStatus.PENDING,
+        code: `ORD-${Date.now()}`,
         created_by: auth.sub,
       })
       .select('id')
@@ -109,6 +149,7 @@ export async function POST(req: NextRequest) {
         cartItems.map(item => ({
           order_id: newOrder.id,
           product_id: item.product_id,
+          product_name: item.products.name,
           quantity: item.quantity,
           price_snapshot: item.products.price,
           created_by: auth.sub,
@@ -134,6 +175,20 @@ export async function POST(req: NextRequest) {
         status: 500,
       })
     }
+
+    sendEmail(
+      email,
+      'Order Created',
+      `
+        <h1>Order Created</h1>
+        <p>Your order has been created successfully.</p>
+        <p>Order ID: ${newOrder.id}</p>
+        <p>Order Date: ${new Date().toISOString()}</p>
+        <p>Order Total: ${totalAmount}</p>
+        <p>Order Status: ${OrderStatus.PENDING}</p>
+        <p>Order Items: ${cartItems.map(item => `${item.products.name} - ${item.products.price} - ${item.quantity}`).join(', ')}</p>
+      `,
+    )
 
     return NextResponse.json(
       generateSuccessResponse(

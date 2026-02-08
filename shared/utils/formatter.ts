@@ -1,4 +1,5 @@
 import { KeyboardEvent } from 'react'
+import { OrderStatus } from '../enums/status'
 
 export function formatFullName(firstName: string, lastName: string): string {
   return `${firstName} ${lastName}`.trim()
@@ -78,5 +79,43 @@ export const restrictToNumericInput = (e: KeyboardEvent): void => {
 
   if (!onlyNumber.test(e.key) && !allowedKeys.includes(e.key)) {
     e.preventDefault()
+  }
+}
+
+export function formatDate(value: string | null | undefined): string {
+  if (!value) return '—'
+  return new Date(value).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+export function formatDateTime(value: string | null | undefined): string {
+  if (!value) return '—'
+  return new Date(value).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+export function statusVariantClassName(status: string): string {
+  switch (status?.toLowerCase()) {
+    case OrderStatus.COMPLETED:
+    case OrderStatus.DELIVERED:
+      return 'bg-green-500/10 text-green-700'
+    case OrderStatus.CANCELLED:
+      return 'bg-red-500/10 text-red-700'
+    case OrderStatus.PENDING:
+      return 'bg-yellow-500/10 text-yellow-700'
+    case OrderStatus.PAID:
+      return 'bg-blue-500/10 text-blue-700'
+    case OrderStatus.SHIPPED:
+      return 'bg-purple-500/10 text-purple-700'
+    default:
+      return 'bg-neutral-500/10 text-neutral-700'
   }
 }

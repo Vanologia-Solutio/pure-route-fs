@@ -85,7 +85,7 @@ export default function LoginForm({
               type='submit'
               disabled={isLoading}
             >
-              {isLoading && <Loader2 className='w-4 h-4 animate-spin' />}
+              {isLoading && <Loader2 className='size-4 animate-spin' />}
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </Field>

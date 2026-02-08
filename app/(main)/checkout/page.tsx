@@ -1,15 +1,18 @@
 'use client'
 
-import CheckoutForm from '@/components/checkout/checkout-form'
-import OrderSummary from '@/components/checkout/order-summary'
+import CheckoutForm from '@/components/orders/checkout-form'
+import OrderSummary from '@/components/orders/order-summary'
 import { cartQueries } from '@/hooks/use-cart'
 import { masterDataQueries } from '@/hooks/use-master-data'
 import { orderQueries } from '@/hooks/use-order'
 import { CHECKOUT_LOV } from '@/shared/constants/checkout-lov'
 import { CreateOrderDto } from '@/shared/dtos/order'
+import { useRouter } from 'next/navigation'
 import { Fragment, SubmitEvent, useState } from 'react'
 
 export default function CheckoutPage() {
+  const router = useRouter()
+
   const [shipmentMethod, setShipmentMethod] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
 
@@ -41,7 +44,7 @@ export default function CheckoutPage() {
     try {
       const res = await createOrder(orderSubmission)
       if (res.success) {
-        console.log('Order created successfully')
+        router.push(`/orders/${res.data?.id}`)
       }
     } catch (error) {
       console.error(error)

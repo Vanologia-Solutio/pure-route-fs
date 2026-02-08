@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cartQueries } from '@/hooks/use-cart'
+import { Role } from '@/shared/enums/role'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Product } from '@/shared/types/product'
 import { formatCurrency } from '@/shared/utils/formatter'
@@ -22,7 +23,7 @@ import LoginAlert from '../general/login-alert'
 export default function ProductDisplay({ products }: { products: Product[] }) {
   const router = useRouter()
   const addItem = cartQueries.useAddItem()
-  const { isAuthenticated } = useAuthStore()
+  const { user, isAuthenticated } = useAuthStore()
   const [addingId, setAddingId] = useState<number | null>(null)
   const [loginOpen, setLoginOpen] = useState(false)
 
@@ -47,6 +48,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
     )
   }
 
+  const isAdmin = user?.attrs?.role?.toLowerCase() === Role.ADMINISTRATOR
   const isAnyAdding = addItem.isPending
 
   return (
@@ -73,24 +75,29 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
                 {product.category.toUpperCase()}
               </Badge>
               <CardTitle>{product.name}</CardTitle>
-              <CardDescription>{product.description}</CardDescription>
+              <CardDescription className='line-clamp-2'>
+                {product.description}
+              </CardDescription>
             </CardHeader>
             <CardFooter>
               <div className='flex items-center justify-between w-full'>
                 <span className='text-xl font-bold text-green-700'>
                   {formatCurrency(product.price)}
                 </span>
-                <Button
-                  className='bg-green-700 text-white hover:bg-green-800'
-                  type='button'
-                  disabled={isAnyAdding}
-                  onClick={e => handleAddOneToCart(e, product.id)}
-                >
-                  <ShoppingCart className='size-4 ' />
-                  {addingId === product.id && isAnyAdding
-                    ? 'Adding...'
-                    : 'Add to Cart'}
-                </Button>
+                {!isAdmin && (
+                  <Button
+                    size='sm'
+                    className='bg-green-700 text-white hover:bg-green-800'
+                    type='button'
+                    disabled={isAnyAdding}
+                    onClick={e => handleAddOneToCart(e, product.id)}
+                  >
+                    <ShoppingCart className='size-4 ' />
+                    {addingId === product.id && isAnyAdding
+                      ? 'Adding...'
+                      : 'Add to Cart'}
+                  </Button>
+                )}
               </div>
             </CardFooter>
           </Card>

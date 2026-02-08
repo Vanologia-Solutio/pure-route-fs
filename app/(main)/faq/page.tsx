@@ -47,7 +47,7 @@ export default function FAQPage() {
 
   return (
     <Fragment>
-      <h1 className='text-3xl font-bold mb-4'>FAQ</h1>
+      <h1 className='text-2xl md:text-3xl font-bold mb-4'>FAQ</h1>
       {faqItems.map(item => (
         <Accordion
           key={item.question}
