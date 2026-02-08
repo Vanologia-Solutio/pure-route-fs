@@ -15,8 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
 import { adminOrderQueries } from '@/hooks/use-admin-order'
+import { cn } from '@/lib/utils'
 import { OrderStatus } from '@/shared/enums/status'
 import { Order, OrderItem } from '@/shared/types/order'
 import {
@@ -24,14 +24,7 @@ import {
   formatDateTime,
   statusVariantClassName,
 } from '@/shared/utils/formatter'
-import {
-  ArrowLeft,
-  Calendar,
-  CreditCard,
-  Loader2,
-  MapPin,
-  Package,
-} from 'lucide-react'
+import { ArrowLeft, Calendar, CreditCard, MapPin, Package } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -115,9 +108,6 @@ export default function AdminOrderDetail({ order }: AdminOrderDetailProps) {
               ))}
             </SelectContent>
           </Select>
-          {updateStatus.isPending && (
-            <Loader2 className='size-4 animate-spin text-muted-foreground' />
-          )}
         </div>
       </div>
 

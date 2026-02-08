@@ -29,22 +29,23 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuthStore } from '@/shared/stores/auth-store'
-import { ShipmentMethod } from '@/shared/types/master-data'
+import { PaymentMethod, ShipmentMethod } from '@/shared/types/master-data'
 import { formatCurrency } from '@/shared/utils/formatter'
 import { Loader2, PackageCheck } from 'lucide-react'
-import { SubmitEvent } from 'react'
+import { Dispatch, SetStateAction, SubmitEvent } from 'react'
 import { Skeleton } from '../ui/skeleton'
 
 interface CheckoutFormProps {
   shipmentMethods: ShipmentMethod[]
   shipmentMethod: string
-  setShipmentMethod: (v: string) => void
-  paymentMethods: { id: string; name: string }[]
+  setShipmentMethod: Dispatch<SetStateAction<string>>
+  paymentMethods: PaymentMethod[]
   paymentMethod: string
-  setPaymentMethod: (v: string) => void
+  setPaymentMethod: Dispatch<SetStateAction<string>>
   onSubmit: (e: SubmitEvent<HTMLFormElement>) => void
   states: {
     isCartLoading: boolean
+    isPaymentMethodsLoading: boolean
     isShipmentMethodsLoading: boolean
     isCreateOrderLoading: boolean
   }
@@ -64,6 +65,7 @@ export default function CheckoutForm({
 
   const isGlobalDisabled =
     states.isCartLoading ||
+    states.isPaymentMethodsLoading ||
     states.isShipmentMethodsLoading ||
     states.isCreateOrderLoading
 
@@ -209,9 +211,11 @@ export default function CheckoutForm({
         </CardHeader>
         <CardContent>
           <RadioGroup
-            name='shipmentMethod'
-            value={shipmentMethod}
-            onValueChange={setShipmentMethod}
+            name='checkout-shipment-method'
+            value={shipmentMethod ? `shipment-${shipmentMethod}` : ''}
+            onValueChange={v =>
+              setShipmentMethod(v ? v.replace(/^shipment-/, '') : '')
+            }
             disabled={isGlobalDisabled}
             required
           >
@@ -222,16 +226,19 @@ export default function CheckoutForm({
                 <Skeleton className='w-full h-10' />
               </div>
             ) : (
-              shipmentMethods.map(method => (
-                <FieldLabel key={method.id} htmlFor={method.id}>
+              shipmentMethods.map(s => (
+                <FieldLabel key={s.id} htmlFor={`shipment-${s.id}`}>
                   <Field orientation='horizontal'>
                     <FieldContent>
                       <FieldTitle>
-                        {method.code} ({formatCurrency(method.fee)})
+                        {s.code} ({formatCurrency(s.fee)})
                       </FieldTitle>
-                      <FieldDescription>{method.description}</FieldDescription>
+                      <FieldDescription>{s.description}</FieldDescription>
                     </FieldContent>
-                    <RadioGroupItem value={method.id} id={method.id} />
+                    <RadioGroupItem
+                      value={`shipment-${s.id}`}
+                      id={`shipment-${s.id}`}
+                    />
                   </Field>
                 </FieldLabel>
               ))
@@ -249,26 +256,37 @@ export default function CheckoutForm({
           <CardDescription>Select how you would like to pay</CardDescription>
         </CardHeader>
         <CardContent>
-          <Field>
-            <RadioGroup
-              name='paymentMethod'
-              value={paymentMethod}
-              onValueChange={setPaymentMethod}
-              disabled={isGlobalDisabled}
-              required
-            >
-              {paymentMethods.map(method => (
-                <FieldLabel key={method.id} htmlFor={method.id}>
+          <RadioGroup
+            name='checkout-payment-method'
+            value={paymentMethod ? `payment-${paymentMethod}` : ''}
+            onValueChange={v =>
+              setPaymentMethod(v ? v.replace(/^payment-/, '') : '')
+            }
+            disabled={isGlobalDisabled}
+            required
+          >
+            {states.isPaymentMethodsLoading ? (
+              <div className='flex flex-col gap-2'>
+                <Skeleton className='w-full h-10' />
+                <Skeleton className='w-full h-10' />
+                <Skeleton className='w-full h-10' />
+              </div>
+            ) : (
+              paymentMethods.map(p => (
+                <FieldLabel key={p.id} htmlFor={`payment-${p.id}`}>
                   <Field orientation='horizontal'>
                     <FieldContent>
-                      <FieldTitle>{method.name}</FieldTitle>
+                      <FieldTitle>{p.name}</FieldTitle>
                     </FieldContent>
-                    <RadioGroupItem value={method.id} id={method.id} />
+                    <RadioGroupItem
+                      value={`payment-${p.id}`}
+                      id={`payment-${p.id}`}
+                    />
                   </Field>
                 </FieldLabel>
-              ))}
-            </RadioGroup>
-          </Field>
+              ))
+            )}
+          </RadioGroup>
         </CardContent>
       </Card>
 

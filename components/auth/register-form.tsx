@@ -54,7 +54,12 @@ export default function RegisterForm({
               className='flex flex-col items-center gap-2 font-medium'
             >
               <div className='flex size-16 items-center justify-center rounded-md'>
-                <Image src='/meta-logo.png' alt='Logo' width={64} height={64} />
+                <Image
+                  src='/meta-logo.webp'
+                  alt='Logo'
+                  width={64}
+                  height={64}
+                />
               </div>
               <span className='sr-only'>Pure Route Peptides</span>
             </a>

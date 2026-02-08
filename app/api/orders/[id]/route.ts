@@ -20,7 +20,7 @@ export async function GET(
 
     const { data: order } = await sb
       .from('orders')
-      .select('*, shipment_methods!inner(code)')
+      .select('*, shipment_methods!inner(code), payment_methods!inner(name)')
       .eq('id', id)
       .single()
     if (!order) {
@@ -42,6 +42,7 @@ export async function GET(
     const resPayload = {
       ...order,
       shipment_method: order.shipment_methods.code,
+      payment_method: order.payment_methods.name,
       items: orderItems.map(item => ({
         ...item,
         file_path: item.products.file_path,

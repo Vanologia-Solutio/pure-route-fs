@@ -5,7 +5,6 @@ import OrderSummary from '@/components/orders/order-summary'
 import { cartQueries } from '@/hooks/use-cart'
 import { masterDataQueries } from '@/hooks/use-master-data'
 import { orderQueries } from '@/hooks/use-order'
-import { CHECKOUT_LOV } from '@/shared/constants/checkout-lov'
 import { CreateOrderDto } from '@/shared/dtos/order'
 import { useRouter } from 'next/navigation'
 import { Fragment, SubmitEvent, useState } from 'react'
@@ -13,8 +12,8 @@ import { Fragment, SubmitEvent, useState } from 'react'
 export default function CheckoutPage() {
   const router = useRouter()
 
-  const [shipmentMethod, setShipmentMethod] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('')
+  const [shipmentMethod, setShipmentMethod] = useState<string>('')
+  const [paymentMethod, setPaymentMethod] = useState<string>('')
 
   const { data: cartRes, isLoading: isLoadingCart } =
     cartQueries.useGetDetails()
@@ -22,6 +21,9 @@ export default function CheckoutPage() {
   const { data: shipmentMethodsRes, isLoading: isLoadingShipmentMethods } =
     masterDataQueries.useGetShipmentMethods()
   const shipmentMethods = shipmentMethodsRes?.data ?? []
+  const { data: paymentMethodsRes, isLoading: isLoadingPaymentMethods } =
+    masterDataQueries.useGetPaymentMethods()
+  const paymentMethods = paymentMethodsRes?.data ?? []
   const { mutateAsync: createOrder, isPending: isLoadingCreateOrder } =
     orderQueries.useCreate()
 
@@ -70,12 +72,13 @@ export default function CheckoutPage() {
             shipmentMethods={shipmentMethods}
             shipmentMethod={shipmentMethod}
             setShipmentMethod={setShipmentMethod}
-            paymentMethods={CHECKOUT_LOV.PAYMENT_METHODS}
+            paymentMethods={paymentMethods}
             paymentMethod={paymentMethod}
             setPaymentMethod={setPaymentMethod}
             onSubmit={handleSubmit}
             states={{
               isCartLoading: isLoadingCart,
+              isPaymentMethodsLoading: isLoadingPaymentMethods,
               isShipmentMethodsLoading: isLoadingShipmentMethods,
               isCreateOrderLoading: isLoadingCreateOrder,
             }}

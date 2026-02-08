@@ -1,8 +1,3 @@
-type PaymentMethod = {
-  id: string
-  name: string
-}
-
 type Country = {
   id: string
   name: string
@@ -14,20 +9,9 @@ type State = {
 }
 
 export const CHECKOUT_LOV: {
-  PAYMENT_METHODS: PaymentMethod[]
   COUNTRIES: Country[]
   STATES: State[]
 } = {
-  PAYMENT_METHODS: [
-    {
-      id: 'card',
-      name: 'Credit/Debit Card',
-    },
-    {
-      id: 'paypal',
-      name: 'PayPal',
-    },
-  ],
   COUNTRIES: [
     {
       id: 'united-states',

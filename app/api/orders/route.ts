@@ -1,11 +1,13 @@
 import { sendEmail } from '@/lib/mailer'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { EmailTemplate } from '@/shared/enums/email-template'
 import { CartStatus, OrderStatus } from '@/shared/enums/status'
 import {
   generateErrorResponse,
   generateSuccessResponse,
 } from '@/shared/helpers/api-response'
 import { isAuthFailed, requireAuth } from '@/shared/utils/auth'
+import { formatDateTime } from '@/shared/utils/formatter'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
@@ -107,12 +109,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const { data: paymentMethodData } = await sb
+      .from('payment_methods')
+      .select('name, identity')
+      .eq('id', paymentMethod)
+      .single()
+    if (!paymentMethodData) {
+      return NextResponse.json(
+        generateErrorResponse('Payment method not found'),
+        {
+          status: 404,
+        },
+      )
+    }
+
+    const paymentIdentity = paymentMethodData.identity
     const shipmentMethodFee = shipmentMethodData.fee
     const subtotalAmount = cartItems.reduce(
       (acc, item) => acc + item.products.price * item.quantity,
       0,
     )
     const totalAmount = subtotalAmount + shipmentMethodFee
+    const orderCode = `ORD-${Date.now()}`
 
     const { data: newOrder, error: newOrderError } = await sb
       .from('orders')
@@ -128,14 +146,14 @@ export async function POST(req: NextRequest) {
         phone_no: phone || null,
         shipment_method_id: shipmentMethod,
         delivery_fee_snapshot: shipmentMethodFee,
-        payment_method: paymentMethod,
+        payment_method_id: paymentMethod,
         subtotal_amount: subtotalAmount,
         total_amount: totalAmount,
         status: OrderStatus.PENDING,
-        code: `ORD-${Date.now()}`,
+        code: orderCode,
         created_by: auth.sub,
       })
-      .select('id')
+      .select('id, creation_date')
       .single()
     if (newOrderError) {
       return NextResponse.json(generateErrorResponse(newOrderError.message), {
@@ -176,19 +194,23 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    sendEmail(
+    const { error: emailError } = await sendEmail(
       email,
-      'Order Created',
-      `
-        <h1>Order Created</h1>
-        <p>Your order has been created successfully.</p>
-        <p>Order ID: ${newOrder.id}</p>
-        <p>Order Date: ${new Date().toISOString()}</p>
-        <p>Order Total: ${totalAmount}</p>
-        <p>Order Status: ${OrderStatus.PENDING}</p>
-        <p>Order Items: ${cartItems.map(item => `${item.products.name} - ${item.products.price} - ${item.quantity}`).join(', ')}</p>
-      `,
+      'Thank you for your order',
+      EmailTemplate.PAYMENT,
+      {
+        customerName: recipientName,
+        orderNumber: orderCode,
+        orderDate: formatDateTime(newOrder.creation_date),
+        paymentMethod: paymentMethodData.name,
+        paymentIdentity,
+      },
     )
+    if (emailError) {
+      return NextResponse.json(generateErrorResponse(emailError.message), {
+        status: 500,
+      })
+    }
 
     return NextResponse.json(
       generateSuccessResponse(

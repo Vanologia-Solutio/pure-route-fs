@@ -1,22 +1,22 @@
 export const Env: {
-  APP_URL: string
   SUPABASE_URL: string
   SUPABASE_PUBLISHABLE_DEFAULT_KEY: string
   TOKEN_NAME: string
   TOKEN_EXPIRATION: string
   HTTP_REQUEST_TIMEOUT: string
-  GMAIL_USER: string
-  GMAIL_PASSWORD: string
+  RESEND_API_KEY: string
+  RESEND_FROM_EMAIL: string
   JWT_SECRET: string
+  LOGO_PATH: string
 } = {
-  APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? '',
   SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   SUPABASE_PUBLISHABLE_DEFAULT_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? '',
   TOKEN_NAME: process.env.NEXT_PUBLIC_TOKEN_NAME ?? '',
   TOKEN_EXPIRATION: process.env.NEXT_PUBLIC_TOKEN_EXPIRATION ?? '',
   HTTP_REQUEST_TIMEOUT: process.env.NEXT_PUBLIC_HTTP_REQUEST_TIMEOUT ?? '',
-  GMAIL_USER: process.env.NEXT_PUBLIC_GMAIL_USER ?? '',
-  GMAIL_PASSWORD: process.env.NEXT_PUBLIC_GMAIL_PASSWORD ?? '',
+  RESEND_API_KEY: process.env.RESEND_API_KEY ?? '',
+  RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL ?? '',
   JWT_SECRET: process.env.JWT_SECRET ?? '',
+  LOGO_PATH: process.env.LOGO_PATH ?? '',
 }

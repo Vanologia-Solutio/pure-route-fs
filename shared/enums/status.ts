@@ -13,6 +13,7 @@ export enum OrderStatus {
 }
 
 export enum PaymentMethod {
-  CARD = 'card',
-  PAYPAL = 'paypal',
+  ZELLE = 'zelle',
+  CASHAPP = 'cashapp',
+  BITCOIN = 'bitcoin',
 }

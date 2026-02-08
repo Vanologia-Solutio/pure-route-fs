@@ -57,7 +57,7 @@ export default function NavigationBar() {
     <nav className='sticky top-0 z-50 w-full bg-white shadow-md p-4'>
       <div className='max-w-6xl mx-auto flex items-center justify-between gap-4'>
         <Link href='/'>
-          <Image src='/logo.png' alt='Logo' width={196} height={36} />
+          <Image src='/logo.webp' alt='Logo' width={196} height={36} />
         </Link>
         <div className='flex items-center gap-4'>
           {navigationItems.map(item => (
