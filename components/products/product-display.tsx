@@ -57,7 +57,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
         {products.map(product => (
           <Card
             key={product.id}
-            className='relative pt-0 overflow-hidden hover:shadow-xl transition-all duration-200'
+            className='relative pt-0 sm:pt-0 overflow-hidden hover:shadow-xl transition-all duration-200'
           >
             <div
               className='relative aspect-square w-full h-full cursor-pointer'
