@@ -45,25 +45,6 @@ export default function Hero() {
                 Learn More
               </Button>
             </div>
-
-            <div className='flex items-center gap-8 pt-8 border-t border-border'>
-              <div>
-                <div className='text-2xl font-bold text-green-700'>0+</div>
-                <p className='text-sm text-muted-foreground'>
-                  Healthcare Partners
-                </p>
-              </div>
-              <div>
-                <div className='text-2xl font-bold text-green-700'>0+</div>
-                <p className='text-sm text-muted-foreground'>Patients Helped</p>
-              </div>
-              <div>
-                <div className='text-2xl font-bold text-green-700'>0+</div>
-                <p className='text-sm text-muted-foreground'>
-                  Years in Industry
-                </p>
-              </div>
-            </div>
           </div>
 
           {/* Right Image */}
