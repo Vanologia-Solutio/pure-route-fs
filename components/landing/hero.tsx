@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 export default function Hero() {
@@ -67,16 +68,13 @@ export default function Hero() {
 
           {/* Right Image */}
           <div className='relative'>
-            <div className='aspect-square bg-linear-to-br from-green-700/20 to-accent/20 rounded-2xl overflow-hidden flex items-center justify-center'>
-              <div className='text-center space-y-4'>
-                <div className='size-24 bg-green-700/10 rounded-full mx-auto flex items-center justify-center'>
-                  <CheckCircle className='size-12 text-green-700' />
-                </div>
-                <p className='text-primary font-semibold'>FDA Approved</p>
-                <p className='text-muted-foreground text-sm'>
-                  Certified & Trusted
-                </p>
-              </div>
+            <div className='aspect-square rounded-2xl overflow-hidden shadow-lg'>
+              <Image
+                src='/hero-image.webp'
+                alt='Hero Image'
+                fill
+                className='object-cover'
+              />
             </div>
           </div>
         </div>
