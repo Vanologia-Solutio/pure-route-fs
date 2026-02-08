@@ -53,7 +53,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
 
   return (
     <Fragment>
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
+      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
         {products.map(product => (
           <Card
             key={product.id}
@@ -74,13 +74,13 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
               <Badge className='bg-blue-500/10 text-blue-800'>
                 {product.category.toUpperCase()}
               </Badge>
-              <CardTitle>{product.name}</CardTitle>
+              <CardTitle className='line-clamp-1'>{product.name}</CardTitle>
               <CardDescription className='line-clamp-2'>
                 {product.description}
               </CardDescription>
             </CardHeader>
             <CardFooter>
-              <div className='flex items-center justify-between w-full'>
+              <div className='flex flex-row gap-2 items-center justify-between w-full'>
                 <span className='text-xl font-bold text-green-700'>
                   {formatCurrency(product.price)}
                 </span>
@@ -92,10 +92,12 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
                     disabled={isAnyAdding}
                     onClick={e => handleAddOneToCart(e, product.id)}
                   >
-                    <ShoppingCart className='size-4 ' />
-                    {addingId === product.id && isAnyAdding
-                      ? 'Adding...'
-                      : 'Add to Cart'}
+                    <ShoppingCart className='size-4' />
+                    <span className='hidden md:block'>
+                      {addingId === product.id && isAnyAdding
+                        ? 'Adding...'
+                        : 'Add to Cart'}
+                    </span>
                   </Button>
                 )}
               </div>

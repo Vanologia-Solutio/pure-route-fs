@@ -172,7 +172,7 @@ export default function AdminPanelPage() {
               variant={activeTab === item.value ? 'default' : 'ghost'}
               size='sm'
               className={cn(
-                'hover:bg-green-700/10 hover:text-green-700 focus:bg-green-700 focus:text-white w-48',
+                'hover:bg-green-700/10 hover:text-green-700 focus:bg-green-700 focus:text-white',
                 activeTab === item.value && 'bg-green-700 text-white shadow-sm',
               )}
               onClick={() => setActiveTab(item.value)}

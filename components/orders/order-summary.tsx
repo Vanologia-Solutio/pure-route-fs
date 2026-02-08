@@ -3,10 +3,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Cart } from '@/shared/types/cart'
 import { formatCurrency } from '@/shared/utils/formatter'
-import { ChevronDown } from 'lucide-react'
 import Image from 'next/image'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import LoadingSpinner from '../general/loader-spinner'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '../ui/accordion'
+import { Separator } from '../ui/separator'
+import { Skeleton } from '../ui/skeleton'
 
 interface OrderSummaryProps {
   items: Cart['products']
@@ -27,35 +34,35 @@ export default function OrderSummary({
   mobile = false,
   states,
 }: OrderSummaryProps) {
-  const [isOpen, setIsOpen] = useState(!mobile)
-
   if (mobile) {
     return (
-      // change to accordion
-      <Card className='border-slate-200 bg-white shadow-sm'>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className='flex w-full items-center justify-between px-6 py-4 hover:bg-slate-50'
-        >
-          <div className='text-left'>
-            <p className='text-sm font-medium'>Order Summary</p>
-            <p className='text-2xl font-bold'>{formatCurrency(total)}</p>
-          </div>
-          <ChevronDown
-            className={`h-5 w-5 transition-transform  ${isOpen ? 'rotate-180' : ''}`}
-          />
-        </button>
-        {isOpen && (
-          <CardContent className='border-t border-slate-200 pt-4'>
+      <Accordion
+        type='single'
+        collapsible
+        className='w-full border rounded-lg shadow-sm'
+      >
+        <AccordionItem value='order-summary' className='border-0'>
+          <AccordionTrigger className='p-4 hover:bg-slate-50 [&[data-state=open]>svg]:rotate-180 transition-colors'>
+            {states.isLoading ? (
+              <Skeleton className='w-full h-12' />
+            ) : (
+              <div className='text-left'>
+                <p className='font-medium'>Order Summary</p>
+                <p className='text-2xl font-bold'>{formatCurrency(total)}</p>
+              </div>
+            )}
+          </AccordionTrigger>
+          <AccordionContent className='p-4'>
             <ItemsList items={items} />
+            <Separator className='my-4' />
             <SummaryDetails
               subtotal={subtotal}
               shipmentCost={shipmentCost}
               total={total}
             />
-          </CardContent>
-        )}
-      </Card>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     )
   }
 
@@ -70,6 +77,7 @@ export default function OrderSummary({
         ) : (
           <Fragment>
             <ItemsList items={items} />
+            <Separator />
             <SummaryDetails
               subtotal={subtotal}
               shipmentCost={shipmentCost}
@@ -84,7 +92,7 @@ export default function OrderSummary({
 
 function ItemsList({ items }: { items: Cart['products'] }) {
   return (
-    <div className='space-y-3 border-b border-slate-200 pb-4'>
+    <div className='space-y-3'>
       {items.map(item => (
         <div key={item.id} className='flex items-center justify-between gap-2'>
           <div className='relative flex items-center gap-2 shrink-0'>

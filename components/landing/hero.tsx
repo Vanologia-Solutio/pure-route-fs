@@ -17,7 +17,7 @@ export default function Hero() {
   }
 
   return (
-    <section className='relative overflow-hidden'>
+    <section className='relative overflow-hidden px-4'>
       <div className='absolute inset-0 bg-linear-to-br from-secondary to-background -z-10' />
 
       <div className='max-w-6xl mx-auto py-20 md:py-32'>
