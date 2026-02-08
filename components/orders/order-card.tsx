@@ -33,10 +33,10 @@ export default function OrderCard({ order }: { order: OrderCardItem }) {
       <Card className='h-full group-hover:shadow-md duration-200'>
         <CardHeader className='flex flex-row items-start justify-between gap-2'>
           <div className='min-w-0'>
-            <CardTitle className='truncate text-lg text-green-700'>
+            <CardTitle className='truncate text-base sm:text-lg text-green-700'>
               {order.code}
             </CardTitle>
-            <CardDescription className='mt-0.5'>
+            <CardDescription className='mt-0.5 text-xs sm:text-sm'>
               {formatDateTime(order.creation_date)}
             </CardDescription>
           </div>
@@ -46,13 +46,13 @@ export default function OrderCard({ order }: { order: OrderCardItem }) {
               statusVariantClassName(order.status),
             )}
           >
-            {order.status.toUpperCase()}
+            {order.status}
           </span>
         </CardHeader>
         <CardContent className='flex items-center justify-between'>
           <div className='space-y-0.5'>
             <p className='text-xs text-muted-foreground'>Total Amount</p>
-            <span className='text-lg font-bold'>
+            <span className='text-base sm:text-lg font-bold'>
               {formatCurrency(order.total_amount)}
             </span>
           </div>

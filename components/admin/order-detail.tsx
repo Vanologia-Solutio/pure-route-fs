@@ -60,7 +60,7 @@ export default function AdminOrderDetail({ order }: AdminOrderDetailProps) {
   }
 
   return (
-    <div className='mx-auto w-full space-y-6'>
+    <div className='mx-auto w-full space-y-4 sm:space-y-6'>
       <Link
         href='/admin/panel'
         className='inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground group'
@@ -71,13 +71,13 @@ export default function AdminOrderDetail({ order }: AdminOrderDetailProps) {
 
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
         <div>
-          <div className='flex flex-wrap items-center gap-2'>
-            <h1 className='text-xl font-bold sm:text-2xl'>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2'>
+            <h1 className='font-bold text-lg sm:text-2xl order-last sm:order-first'>
               Order: <span className='text-green-700'>{order.code}</span>
             </h1>
             <Badge
               className={cn(
-                'w-fit capitalize',
+                'w-fit capitalize text-[0.625rem] sm:text-xs',
                 statusVariantClassName(order.status as OrderStatus),
               )}
             >

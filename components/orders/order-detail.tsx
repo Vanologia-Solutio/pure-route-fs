@@ -37,7 +37,7 @@ export default function OrderDetail({ order }: OrderDetailProps) {
     .join(', ')
 
   return (
-    <div className='mx-auto w-full space-y-6'>
+    <div className='mx-auto w-full space-y-4 sm:space-y-6'>
       {/* Back link */}
       <Link
         href='/orders'
@@ -50,17 +50,17 @@ export default function OrderDetail({ order }: OrderDetailProps) {
       {/* Header: code + status */}
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
         <div>
-          <div className='flex items-center gap-2'>
-            <h1 className='text-xl font-bold sm:text-2xl'>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-2'>
+            <h1 className='font-bold text-lg sm:text-2xl order-last sm:order-first'>
               Order: <span className='text-green-700'>{order.code}</span>
             </h1>
             <Badge
               className={cn(
-                'w-fit capitalize',
+                'w-fit capitalize text-[0.625rem] sm:text-xs',
                 statusVariantClassName(order.status as OrderStatus),
               )}
             >
-              {order.status.toUpperCase()}
+              {order.status}
             </Badge>
           </div>
           <p className='mt-1 text-sm text-muted-foreground'>

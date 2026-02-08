@@ -22,7 +22,7 @@ export default function CTA() {
           Shop Premium Peptide Compounds Today
         </h2>
 
-        <p className='text-xl text-white/90 mb-12 max-w-3xl mx-auto'>
+        <p className='text-base sm:text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto'>
           Discover Pure Route Peptides, your trusted source for high-purity
           peptide-based compounds. Browse our selection and order directly for
           fast, reliable delivery straight to your facility.
@@ -45,10 +45,6 @@ export default function CTA() {
             Contact Support
           </Button>
         </div>
-
-        <p className='text-white/80 mt-8 text-sm'>
-          Trusted by 500+ healthcare providers for advanced peptide medications
-        </p>
       </div>
     </section>
   )

@@ -81,7 +81,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
             </CardHeader>
             <CardFooter>
               <div className='flex flex-row gap-2 items-center justify-between w-full'>
-                <span className='text-xl font-bold text-green-700'>
+                <span className='text-lg sm:text-xl font-bold text-green-700'>
                   {formatCurrency(product.price)}
                 </span>
                 {!isAdmin && (

@@ -39,10 +39,10 @@ export default function AdminOrderCard({
       <Card className='h-full gap-2 border-slate-200 bg-white shadow-sm'>
         <CardHeader className='flex flex-row items-start justify-between gap-2 pb-2'>
           <div className='min-w-0'>
-            <CardTitle className='truncate text-lg text-green-700'>
+            <CardTitle className='truncate text-base sm:text-lg text-green-700'>
               {order.code}
             </CardTitle>
-            <CardDescription className='mt-0.5'>
+            <CardDescription className='mt-0.5 text-xs sm:text-sm'>
               {formatDateTime(order.creation_date)}
             </CardDescription>
           </div>
@@ -55,23 +55,27 @@ export default function AdminOrderCard({
             {order.status}
           </span>
         </CardHeader>
-        <CardContent className='space-y-1.5'>
-          <p className='text-sm font-semibold'>{order.recipient_name}</p>
+        <CardContent className='space-y-1 sm:space-y-1.5'>
+          <p className='text-xs sm:text-sm font-semibold'>
+            {order.recipient_name}
+          </p>
           <p
             className='text-xs text-muted-foreground truncate'
             title={order.contact_info}
           >
             {order.contact_info}
           </p>
-          <p className='text-xs text-muted-foreground'>{order.country}</p>
+          <p className='text-xs sm:text-sm text-muted-foreground'>
+            {order.country}
+          </p>
           <p
-            className='text-xs text-muted-foreground line-clamp-1'
+            className='text-xs sm:text-sm text-muted-foreground line-clamp-1'
             title={shippingAddress}
           >
             {shippingAddress || '—'}
           </p>
           <div className='flex items-center justify-between pt-2'>
-            <span className='text-lg font-bold'>
+            <span className='text-base sm:text-lg font-bold'>
               {formatCurrency(order.total_amount)}
             </span>
             <ChevronRight className='size-5 shrink-0 text-muted-foreground' />

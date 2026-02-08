@@ -134,7 +134,11 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side='right' className='sm:max-w-md' showCloseButton>
+      <SheetContent
+        side='right'
+        className='w-full max-w-full sm:max-w-md'
+        showCloseButton
+      >
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription>
@@ -254,10 +258,10 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                                 isFetching ||
                                 isRemovingItem
                               }
-                              className='rounded-r-none rounded-l-md size-8'
+                              className='rounded-r-none rounded-l-md size-7 sm:size-8'
                               aria-label={`Decrease quantity for ${item.name}`}
                             >
-                              <Minus className='size-4' />
+                              <Minus className='size-3 sm:size-4' />
                             </Button>
                             <Input
                               id={`qty-${item.id}`}
@@ -277,7 +281,7 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                               onBlur={() =>
                                 handleQtyBlur(item.id, item.quantity)
                               }
-                              className='w-16 h-8 text-center border-x-0 [appearance:textfield] rounded-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                              className='w-14 sm:w-16 h-7 sm:h-8 text-center border-x-0 [appearance:textfield] rounded-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
                               disabled={
                                 isUpdatingQty || isFetching || isRemovingItem
                               }
@@ -299,10 +303,10 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                                 isFetching ||
                                 isRemovingItem
                               }
-                              className='rounded-l-none rounded-r-md size-8'
+                              className='rounded-l-none rounded-r-md size-7 sm:size-8'
                               aria-label={`Increase quantity for ${item.name}`}
                             >
-                              <Plus className='size-4' />
+                              <Plus className='size-3 sm:size-4' />
                             </Button>
                           </div>
                         </div>

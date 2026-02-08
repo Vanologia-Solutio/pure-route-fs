@@ -1,6 +1,5 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -20,22 +19,17 @@ export default function Hero() {
     <section className='relative overflow-hidden px-4'>
       <div className='absolute inset-0 bg-linear-to-br from-secondary to-background -z-10' />
 
-      <div className='max-w-6xl mx-auto py-20 md:py-32'>
+      <div className='max-w-6xl mx-auto py-12 sm:py-20 md:py-32'>
         <div className='grid md:grid-cols-2 gap-12 items-center'>
           {/* Left Content */}
-          <div className='space-y-8'>
-            <Badge variant='secondary' className='w-fit'>
-              ✨ Innovation in Healthcare
-            </Badge>
-
-            <h1 className='text-5xl md:text-6xl font-bold text-foreground leading-tight'>
-              Advanced Pharmaceutical Solutions
+          <div className='space-y-4 md:space-y-8'>
+            <h1 className='text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-tight'>
+              Advanced Peptide Solutions
             </h1>
 
-            <p className='text-xl text-muted-foreground max-w-lg'>
-              Delivering cutting-edge pharmaceutical products and healthcare
-              innovations to improve patient outcomes and advance medical
-              science.
+            <p className='text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg'>
+              Delivering cutting-edge products and inovations, processed
+              domestically in the USA.
             </p>
 
             <div className='flex flex-col sm:flex-row gap-4 pt-4'>

@@ -287,6 +287,14 @@ export default function CheckoutForm({
               ))
             )}
           </RadioGroup>
+          <p className='text-xs text-muted-foreground mt-4'>
+            <em className='text-green-700'>Important:</em> Upon selecting{' '}
+            <strong>Zelle, Cash App, or Venmo</strong>, you&apos;ll receive a
+            secure email with our official payment details after checkout. For
+            security, payment info is not displayed on the site. All orders are
+            time-sensitive and must be completed promptly to avoid cancellation.
+            Thank you for your understanding.
+          </p>
         </CardContent>
       </Card>
 

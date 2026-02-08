@@ -27,17 +27,17 @@ export default function Features() {
     <section id='features' className='py-20 md:py-32 bg-white px-4'>
       <div className='max-w-6xl mx-auto'>
         <div className='text-center mb-16'>
-          <h2 className='text-4xl md:text-5xl font-bold text-foreground mb-4'>
+          <h2 className='text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4'>
             Why Choose{' '}
             <span className='text-green-700'>Pure Route Peptides</span>
           </h2>
-          <p className='text-xl text-muted-foreground max-w-2xl mx-auto'>
+          <p className='text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto'>
             We combine scientific excellence with a commitment to improving
-            global health outcomes
+            global health outcomes.
           </p>
         </div>
 
-        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-8'>
+        <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8'>
           {features.map(feature => {
             const Icon = feature.icon
             return (
