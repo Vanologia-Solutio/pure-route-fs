@@ -40,7 +40,7 @@ export const cartQueries = {
         productId,
         quantity,
       }: {
-        productId: string
+        productId: number
         quantity: number
       }) => cartService.updateItemQuantity(productId, quantity),
       onSuccess: () => {

@@ -63,21 +63,21 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const { mutate: removeItem, isPending: isRemovingItem } =
     cartQueries.useRemoveItem()
 
-  const [localQty, setLocalQty] = useState<Record<string, number>>({})
+  const [localQty, setLocalQty] = useState<Record<number, number>>({})
 
-  const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({})
+  const debounceTimers = useRef<Record<number, NodeJS.Timeout>>({})
 
   const cart = cartRes?.data ?? null
   const products = cart?.products ?? []
 
   const getQty = useCallback(
-    (productId: string, defaultQty: number) =>
+    (productId: number, defaultQty: number) =>
       localQty[productId] ?? defaultQty,
     [localQty],
   )
 
   const handleQtyChangeAndUpdate = useCallback(
-    (productId: string, value: number, currentQty: number) => {
+    (productId: number, value: number, currentQty: number) => {
       const clamped = Math.min(MAX_QTY, Math.max(MIN_QTY, value))
       setLocalQty(prev => ({ ...prev, [productId]: clamped }))
 
@@ -95,7 +95,7 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
     [updateQty],
   )
 
-  const handleQtyBlur = (productId: string, currentQty: number) => {
+  const handleQtyBlur = (productId: number, currentQty: number) => {
     if (debounceTimers.current[productId]) {
       clearTimeout(debounceTimers.current[productId])
       delete debounceTimers.current[productId]
@@ -227,7 +227,7 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 variant='destructive'
-                                onClick={() => handleRemove(item.id)}
+                                onClick={() => handleRemove(item.id.toString())}
                               >
                                 Remove
                               </AlertDialogAction>

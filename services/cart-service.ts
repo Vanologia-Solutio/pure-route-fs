@@ -38,7 +38,7 @@ export class CartService {
   }
 
   async updateItemQuantity(
-    productId: string,
+    productId: number,
     quantity: number,
   ): Promise<ApiResponse<null>> {
     try {

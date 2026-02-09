@@ -112,7 +112,7 @@ export default function NavigationBar() {
             >
               <ShoppingCart className='size-5' />
               {!isCartLoading && (
-                <span className='absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-green-700 px-1 text-[10px] font-medium text-white'>
+                <span className='absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-green-700 px-1 text-[10px] font-medium text-white'>
                   {cartDetails?.data?.products?.length ?? 0}
                 </span>
               )}
