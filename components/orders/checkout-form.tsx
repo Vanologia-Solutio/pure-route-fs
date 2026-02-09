@@ -70,12 +70,14 @@ export default function CheckoutForm({
     states.isCreateOrderLoading
 
   return (
-    <form onSubmit={onSubmit} className='space-y-6'>
+    <form onSubmit={onSubmit} className='space-y-4 sm:space-y-6'>
       {/* Contact Information */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-lg'>Contact Information</CardTitle>
-          <CardDescription>
+          <CardTitle className='text-base sm:text-lg'>
+            Contact Information
+          </CardTitle>
+          <CardDescription className='text-xs sm:text-sm'>
             We&apos;ll use this email to send you details and updates about your
             order.
           </CardDescription>
@@ -100,8 +102,10 @@ export default function CheckoutForm({
       {/* Shipping Address */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-lg'>Shipping Address</CardTitle>
-          <CardDescription>
+          <CardTitle className='text-base sm:text-lg'>
+            Shipping Address
+          </CardTitle>
+          <CardDescription className='text-xs sm:text-sm'>
             Enter the address where you want your order delivered.
           </CardDescription>
         </CardHeader>
@@ -200,13 +204,13 @@ export default function CheckoutForm({
       </Card>
 
       {/* Shipment Method */}
-      <Card className='border-slate-200 bg-white shadow-sm'>
+      <Card>
         <CardHeader>
-          <CardTitle className='text-lg text-slate-900'>
-            Shipment Method
+          <CardTitle className='text-base sm:text-lg'>
+            Shipment Options
           </CardTitle>
-          <CardDescription>
-            Choose your preferred delivery speed
+          <CardDescription className='text-xs sm:text-sm'>
+            Choose your preferred delivery speed.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -248,12 +252,12 @@ export default function CheckoutForm({
       </Card>
 
       {/* Payment Method */}
-      <Card className='border-slate-200 bg-white shadow-sm'>
+      <Card>
         <CardHeader>
-          <CardTitle className='text-lg text-slate-900'>
-            Payment Method
-          </CardTitle>
-          <CardDescription>Select how you would like to pay</CardDescription>
+          <CardTitle className='text-base sm:text-lg'>Payment Method</CardTitle>
+          <CardDescription className='text-xs sm:text-sm'>
+            Select how you would like to pay.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <RadioGroup

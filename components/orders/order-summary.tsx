@@ -47,8 +47,12 @@ export default function OrderSummary({
               <Skeleton className='w-full h-12' />
             ) : (
               <div className='text-left'>
-                <p className='font-medium'>Order Summary</p>
-                <p className='text-2xl font-bold'>{formatCurrency(total)}</p>
+                <p className='text-sm sm:text-base font-medium'>
+                  Order Summary
+                </p>
+                <p className='text-xl sm:text-2xl font-bold'>
+                  {formatCurrency(total)}
+                </p>
               </div>
             )}
           </AccordionTrigger>
@@ -67,7 +71,7 @@ export default function OrderSummary({
   }
 
   return (
-    <Card className='sticky top-26 border-slate-200 bg-white shadow-sm'>
+    <Card className='sticky top-24 border-slate-200 bg-white shadow-sm'>
       <CardHeader>
         <CardTitle className='text-lg'>Order Summary</CardTitle>
       </CardHeader>
@@ -132,23 +136,23 @@ function SummaryDetails({
   total: number
 }) {
   return (
-    <div className='space-y-3'>
+    <div className='space-y-2 sm:space-y-3'>
       <div className='flex justify-between'>
-        <span className='text-sm'>Subtotal</span>
-        <span className='font-semibold text-base'>
+        <span className='text-xs sm:text-sm'>Subtotal</span>
+        <span className='font-semibold text-sm sm:text-base'>
           {formatCurrency(subtotal)}
         </span>
       </div>
       <div className='flex justify-between'>
-        <span className='text-sm'>Shipping</span>
-        <span className='font-semibold text-base'>
+        <span className='text-xs sm:text-sm'>Shipping</span>
+        <span className='font-semibold text-sm sm:text-base'>
           {formatCurrency(shipmentCost)}
         </span>
       </div>
       <div className='border-t border-slate-200 pt-3'>
         <div className='flex justify-between'>
-          <span className='font-semibold text-lg'>Total</span>
-          <span className='text-xl font-bold text-green-700'>
+          <span className='font-semibold text-base sm:text-lg'>Total</span>
+          <span className='text-lg sm:text-xl font-bold text-green-700'>
             {formatCurrency(total)}
           </span>
         </div>

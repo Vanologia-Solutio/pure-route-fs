@@ -17,7 +17,7 @@ function replaceHtmlKeys(html: string, vars: Record<string, string>): string {
   return result
 }
 
-export async function sendEmail(
+export async function sendOrderEmail(
   to: string,
   subject: string,
   templateName: string,
@@ -28,7 +28,7 @@ export async function sendEmail(
   const processedHtml = replaceHtmlKeys(template, vars)
 
   return await resend.emails.send({
-    from: Env.RESEND_FROM_EMAIL,
+    from: Env.RESEND_FROM_EMAIL_ORDERS,
     to,
     subject,
     html: processedHtml,

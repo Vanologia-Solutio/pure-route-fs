@@ -1,4 +1,4 @@
-import { sendEmail } from '@/lib/mailer'
+import { sendOrderEmail } from '@/lib/mailer'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import { EmailTemplate } from '@/shared/enums/email-template'
 import { CartStatus, OrderStatus } from '@/shared/enums/status'
@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const { error: emailError } = await sendEmail(
+    const { error: emailError } = await sendOrderEmail(
       email,
       'Thank you for your order',
       EmailTemplate.PAYMENT,

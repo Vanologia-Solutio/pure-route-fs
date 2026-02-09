@@ -1,5 +1,5 @@
 export type ShipmentMethod = {
-  id: string
+  id: number
   code: string
   description: string
   fee: number
@@ -7,7 +7,7 @@ export type ShipmentMethod = {
 }
 
 export type PaymentMethod = {
-  id: string
+  id: number
   code: string
   name: string
   is_active: boolean

@@ -5,7 +5,8 @@ export const Env: {
   TOKEN_EXPIRATION: string
   HTTP_REQUEST_TIMEOUT: string
   RESEND_API_KEY: string
-  RESEND_FROM_EMAIL: string
+  RESEND_FROM_EMAIL_ORDERS: string
+  RESEND_FROM_EMAIL_SUPPORT: string
   JWT_SECRET: string
   LOGO_PATH: string
 } = {
@@ -16,7 +17,8 @@ export const Env: {
   TOKEN_EXPIRATION: process.env.NEXT_PUBLIC_TOKEN_EXPIRATION ?? '',
   HTTP_REQUEST_TIMEOUT: process.env.NEXT_PUBLIC_HTTP_REQUEST_TIMEOUT ?? '',
   RESEND_API_KEY: process.env.RESEND_API_KEY ?? '',
-  RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL ?? '',
+  RESEND_FROM_EMAIL_ORDERS: process.env.RESEND_FROM_EMAIL_ORDERS ?? '',
+  RESEND_FROM_EMAIL_SUPPORT: process.env.RESEND_FROM_EMAIL_SUPPORT ?? '',
   JWT_SECRET: process.env.JWT_SECRET ?? '',
   LOGO_PATH: process.env.LOGO_PATH ?? '',
 }

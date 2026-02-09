@@ -53,7 +53,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
 
   return (
     <Fragment>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
+      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-6'>
         {products.map(product => (
           <Card
             key={product.id}
@@ -70,12 +70,14 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
                 sizes='width: 100%; height: 100%;'
               />
             </div>
-            <CardHeader className='space-y-1'>
-              <Badge className='bg-blue-500/10 text-blue-800'>
+            <CardHeader className='space-y-0.5 sm:space-y-1'>
+              <Badge className='bg-blue-500/10 text-blue-800 text-[0.625rem] sm:text-sm'>
                 {product.category.toUpperCase()}
               </Badge>
-              <CardTitle className='line-clamp-1'>{product.name}</CardTitle>
-              <CardDescription className='line-clamp-2'>
+              <CardTitle className='text-sm sm:text-base line-clamp-1'>
+                {product.name}
+              </CardTitle>
+              <CardDescription className='text-xs sm:text-sm line-clamp-2'>
                 {product.description}
               </CardDescription>
             </CardHeader>

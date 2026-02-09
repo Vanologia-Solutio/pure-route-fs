@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const subtotal =
     items.reduce((sum, item) => sum + item.price * item.quantity, 0) ?? 0
   const shipmentCost =
-    shipmentMethods.find(m => m.id === shipmentMethod)?.fee ?? 0
+    shipmentMethods.find(m => m.id === Number(shipmentMethod))?.fee ?? 0
   const total = subtotal + shipmentCost
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
@@ -55,7 +55,7 @@ export default function CheckoutPage() {
 
   return (
     <Fragment>
-      <div className='mb-6 lg:hidden'>
+      <div className='mb-4 sm:mb-6 lg:hidden'>
         <OrderSummary
           items={items}
           subtotal={subtotal}
@@ -66,7 +66,7 @@ export default function CheckoutPage() {
         />
       </div>
 
-      <div className='grid gap-6 lg:grid-cols-3'>
+      <div className='grid gap-4 sm:gap-6 lg:grid-cols-3'>
         <div className='lg:col-span-2'>
           <CheckoutForm
             shipmentMethods={shipmentMethods}
