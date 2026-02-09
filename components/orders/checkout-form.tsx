@@ -288,7 +288,7 @@ export default function CheckoutForm({
             )}
           </RadioGroup>
           <p className='text-xs text-muted-foreground mt-4'>
-            <em className='text-green-700'>Important:</em> Upon selecting{' '}
+            <span className='text-green-700'>Important:</span> Upon selecting{' '}
             <strong>Zelle, Cash App, or Venmo</strong>, you&apos;ll receive a
             secure email with our official payment details after checkout. For
             security, payment info is not displayed on the site. All orders are

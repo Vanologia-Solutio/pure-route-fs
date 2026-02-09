@@ -11,6 +11,8 @@ export async function GET() {
     const { data: paymentMethods } = await sb
       .from('payment_methods')
       .select('id, name')
+      .eq('is_active', true)
+      .order('name', { ascending: true })
     return NextResponse.json(
       generateSuccessResponse(
         paymentMethods,

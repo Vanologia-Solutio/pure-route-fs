@@ -11,6 +11,8 @@ export async function GET() {
     const { data: shipmentMethods } = await sb
       .from('shipment_methods')
       .select('*')
+      .eq('is_active', true)
+      .order('fee', { ascending: true })
     return NextResponse.json(
       generateSuccessResponse(
         shipmentMethods,
