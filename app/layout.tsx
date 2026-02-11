@@ -4,6 +4,7 @@ import ClientProvider from '@/shared/providers/client-provider'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ReactNode } from 'react'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const geistSans = Geist({
@@ -35,6 +36,7 @@ export default function RootLayout({
           <NavigationBar />
           {children}
           <Footer />
+          <Toaster />
         </ClientProvider>
       </body>
     </html>

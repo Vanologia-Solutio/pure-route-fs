@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       .from('responsibilities')
       .select(`id, menus!inner(id, url, is_active)`)
       .eq('role_id', user.role_id)
+      .eq('menus.is_public', false)
       .eq('menus.is_active', true)
 
     const roleCode = (user.roles as any)?.code

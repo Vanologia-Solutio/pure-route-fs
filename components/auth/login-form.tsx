@@ -10,15 +10,27 @@ import {
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/shared/stores/auth-store'
-import { Loader2 } from 'lucide-react'
+import { Loader2, LogIn } from 'lucide-react'
 import Image from 'next/image'
-import { ComponentProps, SubmitEvent } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { ComponentProps, SubmitEvent, useEffect } from 'react'
+import { toast } from 'sonner'
 
 export default function LoginForm({
   className,
   ...props
 }: ComponentProps<'div'>) {
+  const searchParams = useSearchParams()
+  const state = searchParams.get('state')
+  const redirect = searchParams.get('redirect')
+
   const { isLoading, signIn } = useAuthStore()
+
+  useEffect(() => {
+    if (state === 'revalidation') {
+      toast.error('Session expired or invalid. Please login again.')
+    }
+  }, [state])
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -28,10 +40,17 @@ export default function LoginForm({
       const password = formData.get('password') as string
       const res = await signIn({ username, password })
       if (res.success) {
-        window.location.href = '/shop'
+        toast.success('Login successful. Redirecting...')
+        setTimeout(() => {
+          window.location.href = redirect ?? '/'
+        }, 1000)
       }
     } catch (error) {
-      console.error(error)
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while logging in.',
+      )
     }
   }
 
@@ -58,7 +77,7 @@ export default function LoginForm({
               Welcome to Pure Route Peptides
             </h1>
             <FieldDescription>
-              Don&apos;t have an account? <a href='/register'>Sign up</a>
+              Don&apos;t have an account? <a href='/register'>Register here</a>
             </FieldDescription>
           </div>
           <Field>
@@ -90,7 +109,11 @@ export default function LoginForm({
               type='submit'
               disabled={isLoading}
             >
-              {isLoading && <Loader2 className='size-4 animate-spin' />}
+              {isLoading ? (
+                <Loader2 className='size-4 animate-spin' />
+              ) : (
+                <LogIn className='size-4' />
+              )}
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </Field>

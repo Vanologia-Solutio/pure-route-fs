@@ -94,7 +94,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
                     disabled={isAnyAdding}
                     onClick={e => handleAddOneToCart(e, product.id)}
                   >
-                    <ShoppingCart className='size-4' />
+                    <ShoppingCart className='size-4 block md:hidden' />
                     <span className='hidden md:block'>
                       {addingId === product.id && isAnyAdding
                         ? 'Adding...'

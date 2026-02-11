@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/shared/stores/auth-store'
-import { Loader2 } from 'lucide-react'
+import { Loader2, UserPlus } from 'lucide-react'
 import Image from 'next/image'
 import { ComponentProps, SubmitEvent } from 'react'
 
@@ -120,7 +120,11 @@ export default function RegisterForm({
               type='submit'
               disabled={isLoading}
             >
-              {isLoading && <Loader2 className='size-4 animate-spin' />}
+              {isLoading ? (
+                <Loader2 className='size-4 animate-spin' />
+              ) : (
+                <UserPlus className='size-4' />
+              )}
               {isLoading ? 'Registering...' : 'Register'}
             </Button>
           </Field>

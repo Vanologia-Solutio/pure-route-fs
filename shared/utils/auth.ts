@@ -5,7 +5,7 @@ import { Role } from '../enums/role'
 import { generateErrorResponse } from '../helpers/api-response'
 
 export type AuthPayload = JwtPayload & {
-  sub: string
+  sub: number
   name: string
   username: string
   email: string
