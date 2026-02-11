@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { Env } from '@/shared/constants/environments'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Loader2, UserPlus } from 'lucide-react'
 import Image from 'next/image'
@@ -56,7 +55,7 @@ export default function RegisterForm({
             >
               <div className='flex size-16 items-center justify-center rounded-md'>
                 <Image
-                  src={Env.META_LOGO_PATH}
+                  src='https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/general/meta-logo.webp'
                   alt='Logo'
                   width={64}
                   height={64}

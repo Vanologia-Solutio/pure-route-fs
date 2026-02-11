@@ -34,7 +34,7 @@ export async function sendOrderEmail(
     html: processedHtml,
     attachments: [
       {
-        path: Env.LOGO_PATH,
+        path: 'https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/general/logo.webp',
         filename: 'logo.webp',
         contentId: 'logo',
       },
