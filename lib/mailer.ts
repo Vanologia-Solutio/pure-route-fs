@@ -35,7 +35,7 @@ export async function sendOrderEmail(
     attachments: [
       {
         path: Env.LOGO_PATH,
-        filename: 'logo.png',
+        filename: 'logo.webp',
         contentId: 'logo',
       },
     ],

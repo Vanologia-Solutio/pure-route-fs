@@ -9,6 +9,8 @@ export const Env: {
   RESEND_FROM_EMAIL_SUPPORT: string
   JWT_SECRET: string
   LOGO_PATH: string
+  META_LOGO_PATH: string
+  HERO_IMAGE_PATH: string
 } = {
   SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   SUPABASE_PUBLISHABLE_DEFAULT_KEY:
@@ -21,4 +23,6 @@ export const Env: {
   RESEND_FROM_EMAIL_SUPPORT: process.env.RESEND_FROM_EMAIL_SUPPORT ?? '',
   JWT_SECRET: process.env.JWT_SECRET ?? '',
   LOGO_PATH: process.env.LOGO_PATH ?? '',
+  META_LOGO_PATH: process.env.META_LOGO_PATH ?? '',
+  HERO_IMAGE_PATH: process.env.HERO_IMAGE_PATH ?? '',
 }

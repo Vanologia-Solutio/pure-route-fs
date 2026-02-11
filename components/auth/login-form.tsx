@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { Env } from '@/shared/constants/environments'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Loader2, LogIn } from 'lucide-react'
 import Image from 'next/image'
@@ -64,12 +65,7 @@ export default function LoginForm({
               className='flex flex-col items-center gap-2 font-medium'
             >
               <div className='flex size-16 items-center justify-center rounded-md'>
-                <Image
-                  src='/meta-logo.webp'
-                  alt='Logo'
-                  width={64}
-                  height={64}
-                />
+                <Image src={Env.LOGO_PATH} alt='Logo' width={64} height={64} />
               </div>
               <span className='sr-only'>Pure Route Peptides</span>
             </a>

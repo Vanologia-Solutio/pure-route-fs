@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Env } from '@/shared/constants/environments'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -51,7 +52,7 @@ export default function Hero() {
           <div className='relative'>
             <div className='aspect-square rounded-2xl overflow-hidden shadow-lg'>
               <Image
-                src='/hero-image.webp'
+                src={Env.HERO_IMAGE_PATH}
                 alt='Hero Image'
                 fill
                 className='object-cover'

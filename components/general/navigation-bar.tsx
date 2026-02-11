@@ -3,6 +3,7 @@
 import CartSheet from '@/components/cart/cart-sheet'
 import { cartQueries } from '@/hooks/use-cart'
 import { cn } from '@/lib/utils'
+import { Env } from '@/shared/constants/environments'
 import { Role } from '@/shared/enums/role'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import {
@@ -73,7 +74,7 @@ export default function NavigationBar() {
       <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 p-2.5 sm:p-4'>
         <Link href='/' className='shrink-0'>
           <Image
-            src='/logo.webp'
+            src={Env.LOGO_PATH}
             alt='Logo'
             width={196}
             height={36}
