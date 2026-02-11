@@ -38,6 +38,7 @@ export default function LoginForm({
       const formData = new FormData(e.currentTarget)
       const username = formData.get('username') as string
       const password = formData.get('password') as string
+
       const res = await signIn({ username, password })
       if (res.success) {
         toast.success('Login successful. Redirecting...')

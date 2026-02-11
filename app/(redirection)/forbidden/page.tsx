@@ -29,7 +29,7 @@ export default function ForbiddenPage() {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <div className='flex gap-2 justify-center items-center'>
+          <div className='flex flex-col sm:flex-row gap-2 justify-center items-center'>
             <Button variant='outline' onClick={() => router.back()}>
               <ArrowLeft className='size-4' />
               Go back

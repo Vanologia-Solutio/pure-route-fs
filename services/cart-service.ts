@@ -8,66 +8,65 @@ export class CartService {
   }
 
   async getCartDetails(): Promise<ApiResponse<Cart>> {
-    try {
-      const res = await fetch('/api/cart', { headers: this.headers() })
-      return await res.json()
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message)
-      throw new Error('An unknown error occurred')
+    const res = await fetch('/api/cart', { headers: this.headers() })
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.message)
     }
+    return res.json()
   }
 
   async addItem(
     productId: string,
     quantity: number,
   ): Promise<ApiResponse<null>> {
-    try {
-      const res = await fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...this.headers(),
-        },
-        body: JSON.stringify({ productId, quantity }),
-      })
-      return await res.json()
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message)
-      throw new Error('An unknown error occurred')
+    const res = await fetch('/api/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.headers(),
+      },
+      body: JSON.stringify({ productId, quantity }),
+    })
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.message)
     }
+    return res.json()
   }
 
   async updateItemQuantity(
     productId: number,
     quantity: number,
   ): Promise<ApiResponse<null>> {
-    try {
-      const res = await fetch('/api/cart', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', ...this.headers() },
-        body: JSON.stringify({ productId, quantity }),
-      })
-      return await res.json()
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message)
-      throw new Error('An unknown error occurred')
+    const res = await fetch('/api/cart', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.headers(),
+      },
+      body: JSON.stringify({ productId, quantity }),
+    })
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.message)
     }
+    return res.json()
   }
 
   async removeItem(productId: string): Promise<ApiResponse<null>> {
-    try {
-      const res = await fetch(
-        `/api/cart?productId=${encodeURIComponent(productId)}`,
-        {
-          method: 'DELETE',
-          headers: this.headers(),
-        },
-      )
-      return await res.json()
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message)
-      throw new Error('An unknown error occurred')
+    const res = await fetch(
+      `/api/cart?productId=${encodeURIComponent(productId)}`,
+      {
+        method: 'DELETE',
+        headers: this.headers(),
+      },
+    )
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.message)
     }
+    return res.json()
   }
 }
 
