@@ -1,47 +1,56 @@
-type Country = {
-  id: string
-  name: string
-}
-
-type State = {
-  id: string
-  name: string
-}
-
-export const CHECKOUT_LOV: {
-  COUNTRIES: Country[]
-  STATES: State[]
-} = {
-  COUNTRIES: [
-    {
-      id: 'united-states',
-      name: 'United States',
-    },
-  ],
+export const CHECKOUT_LOV: Record<string, string[]> = {
+  COUNTRIES: ['United States (US)'],
   STATES: [
-    {
-      id: 'california',
-      name: 'California',
-    },
-    {
-      id: 'new-york',
-      name: 'New York',
-    },
-    {
-      id: 'texas',
-      name: 'Texas',
-    },
-    {
-      id: 'florida',
-      name: 'Florida',
-    },
-    {
-      id: 'illinois',
-      name: 'Illinois',
-    },
-    {
-      id: 'michigan',
-      name: 'Michigan',
-    },
+    'Alabama',
+    'Alaska',
+    'Arizona',
+    'Arkansas',
+    'California',
+    'Colorado',
+    'Connecticut',
+    'Delaware',
+    'Florida',
+    'Georgia',
+    'Hawaii',
+    'Idaho',
+    'Illinois',
+    'Indiana',
+    'Iowa',
+    'Kansas',
+    'Kentucky',
+    'Louisiana',
+    'Maine',
+    'Maryland',
+    'Massachusetts',
+    'Michigan',
+    'Minnesota',
+    'Mississippi',
+    'Missouri',
+    'Montana',
+    'Nebraska',
+    'Nevada',
+    'New Hampshire',
+    'New Jersey',
+    'New Mexico',
+    'New York',
+    'North Carolina',
+    'North Dakota',
+    'Ohio',
+    'Oklahoma',
+    'Oregon',
+    'Pennsylvania',
+    'Rhode Island',
+    'South Carolina',
+    'South Dakota',
+    'Tennessee',
+    'Texas',
+    'Utah',
+    'Vermont',
+    'Virginia',
+    'Washington',
+    'West Virginia',
+    'Wisconsin',
+    'Wyoming',
+    'District of Columbia',
   ],
 }

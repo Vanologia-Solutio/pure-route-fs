@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { CHECKOUT_LOV } from '@/shared/constants/checkout-lov'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { PaymentMethod, ShipmentMethod } from '@/shared/types/master-data'
 import { formatCurrency } from '@/shared/utils/formatter'
@@ -129,9 +130,11 @@ export default function CheckoutForm({
                 <SelectContent position='popper'>
                   <SelectGroup>
                     <SelectLabel>Country or Region</SelectLabel>
-                    <SelectItem value='United States (US)'>
-                      United States (US)
-                    </SelectItem>
+                    {CHECKOUT_LOV.COUNTRIES.map(country => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -166,12 +169,11 @@ export default function CheckoutForm({
                   <SelectContent position='popper'>
                     <SelectGroup>
                       <SelectLabel>State or County</SelectLabel>
-                      <SelectItem value='California'>California</SelectItem>
-                      <SelectItem value='New York'>New York</SelectItem>
-                      <SelectItem value='Texas'>Texas</SelectItem>
-                      <SelectItem value='Florida'>Florida</SelectItem>
-                      <SelectItem value='Illinois'>Illinois</SelectItem>
-                      <SelectItem value='Michigan'>Michigan</SelectItem>
+                      {CHECKOUT_LOV.STATES.map(state => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>

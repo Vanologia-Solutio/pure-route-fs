@@ -137,17 +137,15 @@ export default function NavigationBar() {
                       </DropdownMenuItem>
                     </Link>
                   )}
-                  <Link
-                    href='/logout'
+                  <DropdownMenuItem
                     onClick={() => {
                       signOut()
+                      window.location.href = '/login'
                     }}
                   >
-                    <DropdownMenuItem>
-                      <LogOut className='size-4' />
-                      Logout
-                    </DropdownMenuItem>
-                  </Link>
+                    <LogOut className='size-4' />
+                    Logout
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -236,6 +234,7 @@ export default function NavigationBar() {
                   onClick={() => {
                     signOut()
                     setMobileMenuOpen(false)
+                    window.location.href = '/login'
                   }}
                 >
                   <LogOut className='size-5' />

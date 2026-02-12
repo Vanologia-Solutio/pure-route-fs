@@ -44,7 +44,7 @@ export default function Hero() {
           <div className='relative'>
             <div className='aspect-square rounded-2xl overflow-hidden shadow-lg'>
               <Image
-                src='https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/general/hero-image.webp'
+                src='https://kltckzffzhprvaaytscz.supabase.co/storage/v1/object/public/assets/general/hero.webp'
                 alt='Hero Image'
                 fill
                 className='object-cover'

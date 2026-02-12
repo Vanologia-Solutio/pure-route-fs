@@ -44,7 +44,7 @@ export default function LoginForm({
       if (res.success) {
         toast.success('Login successful. Redirecting...')
         setTimeout(() => {
-          window.location.href = redirect ?? '/'
+          window.location.href = redirect || '/'
         }, 1000)
       }
     } catch (error) {
