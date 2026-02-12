@@ -22,7 +22,6 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import LoadingSpinner from '../general/loader-spinner'
 import {
@@ -56,7 +55,6 @@ type CartSheetProps = {
 }
 
 export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
-  const router = useRouter()
   const { data: cartRes, isLoading, isFetching } = cartQueries.useGetDetails()
 
   const { mutate: updateQty, isPending: isUpdatingQty } =
@@ -127,11 +125,6 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
     (sum, p) => sum + p.price * getQty(p.id, p.quantity),
     0,
   )
-
-  const handleProceedToCheckout = () => {
-    onOpenChange(false)
-    router.push('/checkout')
-  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
