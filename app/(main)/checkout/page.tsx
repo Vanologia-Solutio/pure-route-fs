@@ -6,13 +6,10 @@ import { cartQueries } from '@/hooks/use-cart'
 import { masterDataQueries } from '@/hooks/use-master-data'
 import { orderQueries } from '@/hooks/use-order'
 import { CreateOrderDto } from '@/shared/dtos/order'
-import { useRouter } from 'next/navigation'
 import { Fragment, SubmitEvent, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function CheckoutPage() {
-  const router = useRouter()
-
   const [shipmentMethod, setShipmentMethod] = useState<string>('')
   const [paymentMethod, setPaymentMethod] = useState<string>('')
 
@@ -47,7 +44,7 @@ export default function CheckoutPage() {
     try {
       const res = await createOrder(orderSubmission)
       if (res.success) {
-        router.push(`/orders/${res.data?.id}`)
+        window.location.href = '/checkout/success'
       }
     } catch (error) {
       toast.error(

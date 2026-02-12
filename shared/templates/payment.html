@@ -2,61 +2,74 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thank you for your order</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmation</title>
 </head>
 
-<body
-  style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: transparent;">
-  <div style="max-width: 600px; margin: 0 auto; background-color: transparent;">
-
-    <!-- Logo -->
-    <div style="text-align: center; margin-bottom: 30px;">
-      <img src="cid:logo" alt="Pure Route Logo" style="width: auto; height: 48px;" />
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;color:#333;">
+  <div class="wrapper" style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <div class="header" style="background:#2c3e50;padding:32px 40px;text-align:center;">
+      <div style="text-align:center; margin-bottom:30px;">
+        <img src="cid:logo" alt="Pure Route Logo" style="width:auto;height:48px;" />
+      </div>
+      <p style="margin:6px 0 0;color:#aab7c4;font-size:13px;">Order Confirmation</p>
     </div>
+    <div class="body" style="padding:36px 40px;">
+      <p class="greeting" style="font-size:16px;margin-bottom:16px;">Hi {{customerName}},</p>
+      <p class="intro" style="font-size:15px;line-height:1.7;color:#555;margin-bottom:28px;">
+        Thank you for your order! We've received it and it's currently being reviewed. You'll get another email once
+        your payment has been confirmed and your order is on its way.
+      </p>
 
-    <!-- Main Heading -->
-    <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 24px 0; text-align: center;">Thank you for
-      your order</h1>
+      <div class="status-badge" style="display:inline-block;background:#fff8e1;color:#b8860b;border:1px solid #f0d080;border-radius:4px;font-size:12px;font-weight:600;padding:4px 10px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:24px;">
+        ⏳ Awaiting Payment Confirmation
+      </div>
 
-    <!-- Greeting -->
-    <p style="font-size: 16px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px 0;">Hi {{customerName}},</p>
+      <div class="order-box" style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:6px;padding:20px 24px;margin-bottom:28px;">
+        <h2 style="margin:0 0 14px;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;color:#888;">Order Summary</h2>
+        <div class="order-row" style="display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:6px 0;border-bottom:1px solid #ebebeb;">
+          <span class="label" style="color:#888;">Order Number</span>
+          <span class="value" style="font-weight:600;color:#333;">#{{orderNumber}}</span>
+        </div>
+        <div class="order-row" style="display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:6px 0;border-bottom:none;">
+          <span class="label" style="color:#888;">Date Placed</span>
+          <span class="value" style="font-weight:600;color:#333;">{{orderDate}}</span>
+        </div>
+      </div>
 
-    <!-- Order Status -->
-    <p style="font-size: 16px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px 0;">We've received your order and it's
-      currently on hold until we can confirm your payment has been processed.</p>
+      <a class="cta-button" href="{{orderUrl}}" style="display:block;width:fit-content;margin:0 auto 28px;background:#2c3e50;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:6px;font-size:15px;font-weight:600;text-align:center;">View Your Order →</a>
 
-    <p style="font-size: 16px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px 0;">Here's a reminder of what you've
-      ordered:</p>
+      <div class="payment-section" style="background:#f0f7ff;border:1px solid #c8dff7;border-radius:6px;padding:20px 24px;margin-bottom:28px;">
+        <h2 style="margin:0 0 10px;font-size:15px;color:#2c3e50;">💳 How to Complete Your Payment</h2>
+        <p style="margin:0;font-size:14px;color:#555;line-height:1.6;">
+          Please send your payment via <strong>{{paymentMethod}}</strong> to the username below. Once we confirm receipt, your order
+          will be processed.
+        </p>
+        <div style="margin-top:14px;background:#ffffff;border:1px solid #c8dff7;border-radius:6px;padding:14px 18px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:20px;">$</span>
+          <div>
+            <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">
+              {{paymentMethod}} Username
+            </div>
+            <div style="font-size:16px;font-weight:700;color:#2c3e50;letter-spacing:0.5px;">
+              {{paymentIdentity}}
+            </div>
+          </div>
+        </div>
+        <p style="margin:12px 0 0;font-size:13px;color:#888;">
+          ⚠️ Please include your order number <strong>#{{orderNumber}}</strong> in the payment note so we can match it to your order.
+        </p>
+      </div>
 
-    <!-- Warning Box -->
-    <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 16px; margin: 24px 0;">
-      <p style="margin: 0; font-weight: 600; color: #856404; font-size: 16px; line-height: 1.6;">IF YOU DO NOT SEND YOUR
-        PAYMENT WITHIN ONE HOUR YOUR ORDER WILL BE DELETED.</p>
+      <p class="help" style="font-size:14px;color:#777;line-height:1.7;margin-bottom:0;">
+        Questions? Contact our support team at <a href="mailto:pureroutepeptides@proton.me" style="color:#2c3e50;">pureroutepeptides@proton.me</a>. We're happy to help.
+      </p>
     </div>
-
-    <!-- Payment Instructions -->
-    <p style="font-size: 16px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px 0;">There is a chance payment will not
-      work. Do not add anything relating to your order. This includes the order number. If it does not go through,
-      please email us.</p>
-
-    <div style="background-color: #f8f9fa; padding: 16px; border-radius: 6px; margin: 20px 0;">
-      <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;"><strong>Please send your payment on
-          {{paymentMethod}} to: {{paymentIdentity}}</strong></p>
+    <div class="footer" style="background:#f4f4f4;border-top:1px solid #e8e8e8;padding:20px 40px;text-align:center;font-size:12px;color:#aaa;line-height:1.6;">
+      © 2026 Pure Route Peptides<br />
+      You're receiving this email because you placed an order with us.
     </div>
-
-    <!-- Order Summary -->
-    <div style="margin-top: 32px; padding-top: 24px; border-top: 2px solid #e9ecef;">
-      <h2 style="font-size: 20px; font-weight: 600; color: #1a1a1a; margin: 0 0 12px 0;">Order summary</h2>
-      <p style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">Order #{{orderNumber}} ({{orderDate}})</p>
-    </div>
-
-    <footer style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 2px solid #e9ecef;">
-      <p style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">Thank you for your business!</p>
-      <p style="font-size: 14px; color: #6c757d; margin-bottom: 16px;">If you have any questions, please contact us at
-        <a href="mailto:support@pureroutepeps.com">support@pureroutepeps.com</a>.</p>
-    </footer>
   </div>
 </body>
 

@@ -1,5 +1,6 @@
 import { sendOrderEmail } from '@/lib/mailer'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
+import { Env } from '@/shared/constants/environments'
 import { EmailTemplate } from '@/shared/enums/email-template'
 import { CartStatus, OrderStatus } from '@/shared/enums/status'
 import {
@@ -204,6 +205,7 @@ export async function POST(req: NextRequest) {
         orderDate: formatDateTime(newOrder.creation_date),
         paymentMethod: paymentMethodData.name,
         paymentIdentity,
+        orderUrl: `${Env.APP_URL}/callback?redirect_url=/orders/${newOrder.id}`,
       },
     )
     if (emailError) {

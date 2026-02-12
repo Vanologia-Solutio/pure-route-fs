@@ -40,6 +40,6 @@ export default function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|login|register|faq|support|shop|unauthorized|forbidden|not-found).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|login|register|faq|support|shop|unauthorized|forbidden|not-found|callback).*)',
   ],
 }

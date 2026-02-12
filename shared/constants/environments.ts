@@ -1,4 +1,5 @@
 export const Env: {
+  APP_URL: string
   SUPABASE_URL: string
   SUPABASE_PUBLISHABLE_DEFAULT_KEY: string
   TOKEN_NAME: string
@@ -12,6 +13,7 @@ export const Env: {
   META_LOGO_PATH: string
   HERO_IMAGE_PATH: string
 } = {
+  APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? '',
   SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   SUPABASE_PUBLISHABLE_DEFAULT_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? '',
