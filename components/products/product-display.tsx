@@ -16,20 +16,15 @@ import { Product } from '@/shared/types/product'
 import { formatCurrency } from '@/shared/utils/formatter'
 import { ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Fragment, MouseEvent, useState } from 'react'
 import LoginAlert from '../general/login-alert'
 
 export default function ProductDisplay({ products }: { products: Product[] }) {
-  const router = useRouter()
   const addItem = cartQueries.useAddItem()
   const { user, isAuthenticated } = useAuthStore()
   const [addingId, setAddingId] = useState<number | null>(null)
   const [loginOpen, setLoginOpen] = useState(false)
-
-  const handleProductClick = (id: number) => {
-    router.push(`/shop/products/${id}`)
-  }
 
   const handleAddOneToCart = (
     e: MouseEvent<HTMLButtonElement>,
@@ -59,9 +54,9 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
             key={product.id}
             className='relative pt-0 sm:pt-0 overflow-hidden hover:shadow-xl transition-all duration-200'
           >
-            <div
-              className='relative aspect-square w-full h-full cursor-pointer'
-              onClick={() => handleProductClick(product.id)}
+            <Link
+              href={`/shop/products/${product.id}`}
+              className='relative aspect-square size-full'
             >
               <Image
                 src={product.file_path}
@@ -69,7 +64,7 @@ export default function ProductDisplay({ products }: { products: Product[] }) {
                 fill
                 sizes='width: 100%; height: 100%;'
               />
-            </div>
+            </Link>
             <CardHeader className='space-y-0.5 sm:space-y-1'>
               <Badge className='bg-blue-500/10 text-blue-800 text-[0.625rem] sm:text-sm'>
                 {product.category.toUpperCase()}

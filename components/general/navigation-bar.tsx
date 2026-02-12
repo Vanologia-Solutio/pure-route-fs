@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { Fragment, useState } from 'react'
 import { Button } from '../ui/button'
 import {
@@ -30,7 +30,6 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet'
 
 export default function NavigationBar() {
-  const router = useRouter()
   const pathname = usePathname()
   const [cartSheetOpen, setCartSheetOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -48,17 +47,6 @@ export default function NavigationBar() {
     },
     { label: 'FAQ', href: '/faq', icon: <BadgeHelp className='size-5' /> },
   ]
-
-  const handleLogout = () => {
-    signOut()
-    setMobileMenuOpen(false)
-    router.replace('/login')
-  }
-
-  const navigateAndClose = (href: string) => {
-    setMobileMenuOpen(false)
-    router.push(href)
-  }
 
   const isAdmin = user?.attrs?.role?.toLowerCase() === Role.ADMINISTRATOR
 
@@ -84,15 +72,16 @@ export default function NavigationBar() {
         {/* Desktop: nav links */}
         <div className='hidden items-center gap-1 md:flex'>
           {navigationItems.map(item => (
-            <Button
+            <Link
+              href={item.href}
               key={item.href}
-              variant='ghost'
-              className={navButtonClass(item.href)}
-              onClick={() => router.push(item.href)}
+              onClick={() => setMobileMenuOpen(false)}
             >
-              {item.icon}
-              {item.label}
-            </Button>
+              <Button variant='ghost' className={navButtonClass(item.href)}>
+                {item.icon}
+                {item.label}
+              </Button>
+            </Link>
           ))}
         </div>
 
@@ -134,33 +123,43 @@ export default function NavigationBar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>
                   {isAdmin ? (
-                    <DropdownMenuItem
-                      onClick={() => router.push('/admin/panel')}
-                    >
-                      <LayoutDashboard className='size-4' />
-                      Admin Panel
-                    </DropdownMenuItem>
+                    <Link href='/admin/panel'>
+                      <DropdownMenuItem>
+                        <LayoutDashboard className='size-4' />
+                        Admin Panel
+                      </DropdownMenuItem>
+                    </Link>
                   ) : (
-                    <DropdownMenuItem onClick={() => router.push('/orders')}>
-                      <ScrollText className='size-4' />
-                      Orders
-                    </DropdownMenuItem>
+                    <Link href='/orders'>
+                      <DropdownMenuItem>
+                        <ScrollText className='size-4' />
+                        Orders
+                      </DropdownMenuItem>
+                    </Link>
                   )}
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className='size-4' />
-                    Logout
-                  </DropdownMenuItem>
+                  <Link
+                    href='/logout'
+                    onClick={() => {
+                      signOut()
+                    }}
+                  >
+                    <DropdownMenuItem>
+                      <LogOut className='size-4' />
+                      Logout
+                    </DropdownMenuItem>
+                  </Link>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button
-                variant='ghost'
-                className='text-base font-medium hover:text-green-700'
-                onClick={() => router.push('/login')}
-              >
-                <User className='size-5' />
-                Login
-              </Button>
+              <Link href='/login'>
+                <Button
+                  variant='ghost'
+                  className='text-base font-medium hover:text-green-700'
+                >
+                  <User className='size-5' />
+                  Login
+                </Button>
+              </Link>
             )}
           </div>
 
@@ -187,59 +186,72 @@ export default function NavigationBar() {
           </SheetHeader>
           <div className='flex flex-col gap-1 px-2 pb-6'>
             {navigationItems.map(item => (
-              <Button
+              <Link
+                href={item.href}
                 key={item.href}
-                variant='ghost'
-                className={cn(
-                  'justify-start gap-3 text-left font-medium',
-                  pathname === item.href && 'bg-green-700/10 text-green-700',
-                )}
-                onClick={() => navigateAndClose(item.href)}
+                onClick={() => setMobileMenuOpen(false)}
               >
-                {item.icon}
-                {item.label}
-              </Button>
+                <Button
+                  variant='ghost'
+                  className={cn(
+                    'justify-start gap-3 text-left font-medium',
+                    pathname === item.href && 'bg-green-700/10 text-green-700',
+                  )}
+                >
+                  {item.icon}
+                  {item.label}
+                </Button>
+              </Link>
             ))}
             <div className='my-2 border-t border-slate-200' />
             {isAuthenticated ? (
               <Fragment>
                 {isAdmin ? (
-                  <Button
-                    variant='ghost'
-                    className='justify-start gap-3 text-left font-medium'
-                    onClick={() => navigateAndClose('/admin/panel')}
+                  <Link
+                    href='/admin/panel'
+                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    <LayoutDashboard className='size-5' />
-                    Admin Panel
-                  </Button>
+                    <Button
+                      variant='ghost'
+                      className='justify-start gap-3 text-left font-medium'
+                    >
+                      <LayoutDashboard className='size-5' />
+                      Admin Panel
+                    </Button>
+                  </Link>
                 ) : (
-                  <Button
-                    variant='ghost'
-                    className='justify-start gap-3 text-left font-medium'
-                    onClick={() => navigateAndClose('/orders')}
-                  >
-                    <ScrollText className='size-5' />
-                    Orders
-                  </Button>
+                  <Link href='/orders' onClick={() => setMobileMenuOpen(false)}>
+                    <Button
+                      variant='ghost'
+                      className='justify-start gap-3 text-left font-medium'
+                    >
+                      <ScrollText className='size-5' />
+                      Orders
+                    </Button>
+                  </Link>
                 )}
                 <Button
                   variant='ghost'
                   className='justify-start gap-3 text-left font-medium text-red-600 hover:text-red-700'
-                  onClick={handleLogout}
+                  onClick={() => {
+                    signOut()
+                    setMobileMenuOpen(false)
+                  }}
                 >
                   <LogOut className='size-5' />
                   Logout
                 </Button>
               </Fragment>
             ) : (
-              <Button
-                variant='ghost'
-                className='justify-start gap-3 text-left font-medium hover:text-green-700'
-                onClick={() => navigateAndClose('/login')}
-              >
-                <User className='size-5' />
-                Login
-              </Button>
+              <Link href='/login' onClick={() => setMobileMenuOpen(false)}>
+                <Button
+                  variant='ghost'
+                  className='justify-start gap-3 text-left font-medium hover:text-green-700'
+                >
+                  <User className='size-5' />
+                  Login
+                </Button>
+              </Link>
             )}
           </div>
         </SheetContent>

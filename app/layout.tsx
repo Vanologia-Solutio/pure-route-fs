@@ -3,6 +3,7 @@ import NavigationBar from '@/components/general/navigation-bar'
 import ClientProvider from '@/shared/providers/client-provider'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import NextTopLoader from 'nextjs-toploader'
 import { ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import './globals.css'
@@ -33,6 +34,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClientProvider>
+          <NextTopLoader
+            color='#16A34A'
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={false}
+            easing='ease'
+            speed={200}
+            zIndex={99999}
+          />
           <NavigationBar />
           {children}
           <Footer />

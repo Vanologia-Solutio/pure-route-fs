@@ -1,5 +1,5 @@
 import { Info } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Dispatch, SetStateAction } from 'react'
 import {
   AlertDialog,
@@ -23,13 +23,6 @@ export default function LoginAlert({
   loginOpen,
   setLoginOpen,
 }: LoginAlertProps) {
-  const router = useRouter()
-
-  const handleGoToLogin = () => {
-    setLoginOpen(false)
-    router.push('/login')
-  }
-
   return (
     <AlertDialog open={loginOpen} onOpenChange={setLoginOpen}>
       <AlertDialogContent size='sm'>
@@ -45,12 +38,11 @@ export default function LoginAlert({
         <AlertDialogFooter>
           <AlertDialogCancel>Stay here</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button
-              className='bg-green-700 text-white hover:bg-green-800'
-              onClick={handleGoToLogin}
-            >
-              Go to login
-            </Button>
+            <Link href='/login' onClick={() => setLoginOpen(false)}>
+              <Button className='bg-green-700 text-white hover:bg-green-800'>
+                Go to login
+              </Button>
+            </Link>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -12,12 +12,11 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 import { orderQueries } from '@/hooks/use-order'
-import { ScrollText } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { ScrollText, Store } from 'lucide-react'
+import Link from 'next/link'
 import { Fragment } from 'react'
 
 export default function OrdersPage() {
-  const router = useRouter()
   const { data, isLoading } = orderQueries.useGetList()
   const orders = data?.data ?? []
 
@@ -40,12 +39,12 @@ export default function OrdersPage() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button
-              className='bg-green-700 text-white hover:bg-green-800'
-              onClick={() => router.push('/shop')}
-            >
-              Go to shop
-            </Button>
+            <Link href='/shop'>
+              <Button className='bg-green-700 text-white hover:bg-green-800'>
+                <Store className='size-4' />
+                Go to shop
+              </Button>
+            </Link>
           </EmptyContent>
         </Empty>
       ) : (

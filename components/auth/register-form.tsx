@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Loader2, UserPlus } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { ComponentProps, SubmitEvent } from 'react'
 
 export default function RegisterForm({
@@ -67,7 +68,7 @@ export default function RegisterForm({
               Create an account to get started
             </h1>
             <FieldDescription>
-              Already have an account? <a href='/login'>Log in</a>
+              Already have an account? <Link href='/login'>Log in</Link>
             </FieldDescription>
           </div>
           <Field>

@@ -10,6 +10,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 import { ArrowLeft, MessageCircle, ShieldX } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function ForbiddenPage() {
@@ -34,13 +35,12 @@ export default function ForbiddenPage() {
               <ArrowLeft className='size-4' />
               Go back
             </Button>
-            <Button
-              className='bg-green-700 text-white hover:bg-green-800'
-              onClick={() => router.push('/support')}
-            >
-              <MessageCircle className='size-4' />
-              Contact Support
-            </Button>
+            <Link href='/support'>
+              <Button className='bg-green-700 text-white hover:bg-green-800'>
+                <MessageCircle className='size-4' />
+                Contact Support
+              </Button>
+            </Link>
           </div>
         </EmptyContent>
       </Empty>

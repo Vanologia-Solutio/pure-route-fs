@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Loader2, LogIn } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ComponentProps, SubmitEvent, useEffect } from 'react'
 import { toast } from 'sonner'
@@ -78,7 +79,8 @@ export default function LoginForm({
               Welcome to Pure Route Peptides
             </h1>
             <FieldDescription>
-              Don&apos;t have an account? <a href='/register'>Register here</a>
+              Don&apos;t have an account?{' '}
+              <Link href='/register'>Register here</Link>
             </FieldDescription>
           </div>
           <Field>

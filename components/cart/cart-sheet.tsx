@@ -21,6 +21,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import LoadingSpinner from '../general/loader-spinner'
@@ -161,15 +162,11 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent className='flex-row justify-center gap-2'>
-                <Button
-                  className='bg-green-700 text-white hover:bg-green-800'
-                  onClick={() => {
-                    router.push('/shop')
-                    onOpenChange(false)
-                  }}
-                >
-                  Continue Shopping
-                </Button>
+                <Link href='/shop' onClick={() => onOpenChange(false)}>
+                  <Button className='bg-green-700 text-white hover:bg-green-800'>
+                    Continue Shopping
+                  </Button>
+                </Link>
               </EmptyContent>
             </Empty>
           ) : (
@@ -334,21 +331,22 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 {formatCurrency(subtotal)}
               </span>
             </div>
-            <Button
-              size='lg'
-              className='w-full bg-green-700 hover:bg-green-800'
-              onClick={handleProceedToCheckout}
-              disabled={
-                isLoading || isFetching || isRemovingItem || isUpdatingQty
-              }
-            >
-              {isLoading || isFetching || isRemovingItem || isUpdatingQty ? (
-                <Loader2 className='size-4 animate-spin' />
-              ) : (
-                <CreditCard className='size-4' />
-              )}
-              Proceed to Checkout
-            </Button>
+            <Link href='/checkout' onClick={() => onOpenChange(false)}>
+              <Button
+                size='lg'
+                className='w-full bg-green-700 text-white hover:bg-green-800'
+                disabled={
+                  isLoading || isFetching || isRemovingItem || isUpdatingQty
+                }
+              >
+                {isLoading || isFetching || isRemovingItem || isUpdatingQty ? (
+                  <Loader2 className='size-4 animate-spin' />
+                ) : (
+                  <CreditCard className='size-4' />
+                )}
+                Proceed to Checkout
+              </Button>
+            </Link>
           </SheetFooter>
         )}
       </SheetContent>

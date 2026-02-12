@@ -11,16 +11,10 @@ import {
 } from '@/components/ui/empty'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { Lock, LogIn } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function UnauthorizedPage() {
-  const router = useRouter()
   const { signOut } = useAuthStore()
-
-  const handleLogin = () => {
-    signOut()
-    router.replace('/login')
-  }
 
   return (
     <div className='flex items-center justify-center min-h-[calc(100vh-120px)] p-4 lg:px-0 lg:py-4'>
@@ -36,13 +30,17 @@ export default function UnauthorizedPage() {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button
-            className='bg-green-700 text-white hover:bg-green-800'
-            onClick={handleLogin}
+          <Link
+            href='/login'
+            onClick={() => {
+              signOut()
+            }}
           >
-            <LogIn className='size-4' />
-            Go to Login
-          </Button>
+            <Button className='bg-green-700 text-white hover:bg-green-800'>
+              <LogIn className='size-4' />
+              Go to Login
+            </Button>
+          </Link>
         </EmptyContent>
       </Empty>
     </div>

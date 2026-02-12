@@ -17,13 +17,17 @@ import { productQueries } from '@/hooks/use-products'
 import { Role } from '@/shared/enums/role'
 import { useAuthStore } from '@/shared/stores/auth-store'
 import { formatCurrency } from '@/shared/utils/formatter'
-import { ArrowLeft, CheckCircle, CircleQuestionMark } from 'lucide-react'
+import {
+  ArrowLeft,
+  CheckCircle,
+  ChevronLeft,
+  CircleQuestionMark,
+} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 export default function ProductPage() {
-  const router = useRouter()
   const { id } = useParams()
   const { user } = useAuthStore()
   const { data, isLoading } = productQueries.useGetById(id as string)
@@ -45,12 +49,12 @@ export default function ProductPage() {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent className='flex-row justify-center gap-2'>
-          <Button
-            className='bg-green-700 text-white hover:bg-green-800'
-            onClick={() => router.push('/shop')}
-          >
-            Back to shop
-          </Button>
+          <Link href='/shop'>
+            <Button className='bg-green-700 text-white hover:bg-green-800'>
+              <ChevronLeft className='size-4' />
+              Back to shop
+            </Button>
+          </Link>
         </EmptyContent>
       </Empty>
     )

@@ -3,19 +3,9 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Hero() {
-  const router = useRouter()
-
-  const handleGoToShop = () => {
-    router.push('/shop')
-  }
-
-  const handleLearnMore = () => {
-    router.push('/faq')
-  }
-
   return (
     <section className='relative overflow-hidden px-4'>
       <div className='absolute inset-0 bg-linear-to-br from-secondary to-background -z-10' />
@@ -34,16 +24,19 @@ export default function Hero() {
             </p>
 
             <div className='flex flex-col sm:flex-row gap-4 pt-4'>
-              <Button
-                size='lg'
-                className='bg-green-700 text-white hover:bg-green-800 gap-2'
-                onClick={handleGoToShop}
-              >
-                Go to Shop <ArrowRight className='size-4' />
-              </Button>
-              <Button size='lg' variant='outline' onClick={handleLearnMore}>
-                Learn More
-              </Button>
+              <Link href='/shop'>
+                <Button
+                  size='lg'
+                  className='bg-green-700 text-white hover:bg-green-800 gap-2'
+                >
+                  Go to Shop <ArrowRight className='size-4' />
+                </Button>
+              </Link>
+              <Link href='/faq'>
+                <Button size='lg' variant='outline'>
+                  Learn More
+                </Button>
+              </Link>
             </div>
           </div>
 

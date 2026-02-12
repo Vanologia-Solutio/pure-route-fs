@@ -8,6 +8,7 @@ import { orderQueries } from '@/hooks/use-order'
 import { CreateOrderDto } from '@/shared/dtos/order'
 import { useRouter } from 'next/navigation'
 import { Fragment, SubmitEvent, useState } from 'react'
+import { toast } from 'sonner'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -49,7 +50,11 @@ export default function CheckoutPage() {
         router.push(`/orders/${res.data?.id}`)
       }
     } catch (error) {
-      console.error(error)
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while creating the order.',
+      )
     }
   }
 
