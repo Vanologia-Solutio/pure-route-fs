@@ -1,11 +1,34 @@
 import { CreatePromotionDto } from '@/shared/dtos/promotion'
 import { PromotionType } from '@/shared/enums/promotion'
-import { ApiResponse } from '@/shared/helpers/api-response'
+import { ApiResponse, PaginatedResponse } from '@/shared/helpers/api-response'
+import { Promotion } from '@/shared/types/promotion'
 import { getToken } from '@/shared/utils/token'
 
 class PromotionService {
   private headers() {
     return { Authorization: `Bearer ${getToken()}` }
+  }
+
+  async getPromotions(
+    page: number = 1,
+    pageSize: number = 10,
+  ): Promise<PaginatedResponse<Promotion>> {
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: String(pageSize),
+    })
+    const res = await fetch(`/api/promotions?${params}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.headers(),
+      },
+    })
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(error.message)
+    }
+    return res.json()
   }
 
   async createPromotion(

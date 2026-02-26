@@ -9,7 +9,7 @@ import {
   generateSuccessResponse,
 } from '@/shared/helpers/api-response'
 import { isAuthFailed, requireAuth } from '@/shared/utils/auth'
-import { formatDateTime } from '@/shared/utils/formatter'
+import { formatDateTime, roundCurrency } from '@/shared/utils/formatter'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
@@ -128,12 +128,14 @@ export async function POST(req: NextRequest) {
 
     const paymentIdentity = paymentMethodData.identity
     const shipmentMethodFee = shipmentMethodData.fee
-    const subtotalAmount = cartItems.reduce(
-      (acc, item) => acc + item.products.price * item.quantity,
-      0,
+    const subtotalAmount = roundCurrency(
+      cartItems.reduce(
+        (acc, item) => acc + item.products.price * item.quantity,
+        0,
+      ),
     )
 
-    let totalAmount = subtotalAmount + shipmentMethodFee
+    let totalAmount = roundCurrency(subtotalAmount + shipmentMethodFee)
     let discountAmount = 0
 
     if (promotionId) {
@@ -145,20 +147,26 @@ export async function POST(req: NextRequest) {
       if (promotion) {
         const preDiscountTotal = subtotalAmount + shipmentMethodFee
         switch (promotion.type as PromotionType) {
-          case PromotionType.PERCENTAGE:
-            discountAmount = Math.min(
-              Math.round((subtotalAmount * promotion.value) / 100),
-              subtotalAmount,
+          case PromotionType.DISCOUNT:
+            discountAmount = roundCurrency(
+              Math.min(
+                (subtotalAmount * promotion.value) / 100,
+                subtotalAmount,
+              ),
             )
             break
           case PromotionType.FIXED:
-            discountAmount = Math.min(promotion.value, preDiscountTotal)
+            discountAmount = roundCurrency(
+              Math.min(promotion.value, preDiscountTotal),
+            )
             break
           case PromotionType.FREE_SHIPPING:
-            discountAmount = shipmentMethodFee
+            discountAmount = roundCurrency(shipmentMethodFee)
             break
         }
-        totalAmount = Math.max(0, preDiscountTotal - discountAmount)
+        totalAmount = roundCurrency(
+          Math.max(0, preDiscountTotal - discountAmount),
+        )
       }
     }
 
@@ -181,7 +189,7 @@ export async function POST(req: NextRequest) {
         payment_method_id: paymentMethod,
         subtotal_amount: subtotalAmount,
         promotion_id: promotionId || null,
-        discount_amount: discountAmount || 0,
+        discount_amount: roundCurrency(discountAmount || 0),
         total_amount: totalAmount,
         status: OrderStatus.PENDING,
         code: orderCode,

@@ -9,7 +9,9 @@ export interface Promotion {
   code: string
   type: PromotionType
   value: number
+  usage_limit: number | null
   starts_at: Date | null
   expires_at: Date | null
+  description: string | null
   is_active: boolean
 }

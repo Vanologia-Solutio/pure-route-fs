@@ -4,9 +4,11 @@ export interface CreatePromotionDto {
   code: string
   type: PromotionType
   value: number
-  minPurchase: number | null
-  maxDiscount: number | null
+  minPurchase?: number
+  maxDiscount?: number
   usageLimit: number | null
-  startsAt: Date | null
-  expiresAt: Date | null
+  startsAt: string | null
+  expiresAt: string | null
+  description: string | null
+  isActive: boolean
 }

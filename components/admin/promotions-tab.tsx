@@ -1,14 +1,7 @@
 'use client'
 
-import AdminOrderCard from '@/components/admin/order-card'
-import LoadingSpinner from '@/components/general/loader-spinner'
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty'
+import CreatePromotionDialog from '@/components/admin/create-promotion-dialog'
+import PromotionCard from '@/components/admin/promotion-card'
 import {
   Pagination,
   PaginationContent,
@@ -17,35 +10,44 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { adminOrderQueries } from '@/hooks/use-admin-order'
+import { promotionQueries } from '@/hooks/use-promotion'
 import { cn } from '@/lib/utils'
 import { ScrollText } from 'lucide-react'
 import { useState } from 'react'
+import LoadingSpinner from '../general/loader-spinner'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '../ui/empty'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 15
 
-export default function OrdersTab() {
+export default function PromotionsTab() {
   const [page, setPage] = useState(1)
-  const { data, isLoading } = adminOrderQueries.useGetOrdersPaginated(
-    page,
-    PAGE_SIZE,
-  )
-  const orders = data?.data ?? []
-  const pagination = data?.pagination
+  const {
+    data: promotions,
+    isLoading: isLoadingPromotions,
+    isFetching: isFetchingPromotions,
+  } = promotionQueries.useGetList(page, PAGE_SIZE)
+  const promoList = promotions?.data ?? []
+  const pagination = promotions?.pagination
 
-  if (isLoading) {
-    return <LoadingSpinner message='Loading orders...' />
+  if (isLoadingPromotions || isFetchingPromotions) {
+    return <LoadingSpinner message='Loading promotions...' />
   }
 
-  if (orders.length === 0) {
+  if (promoList.length === 0) {
     return (
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant='icon'>
             <ScrollText />
           </EmptyMedia>
-          <EmptyTitle>No orders found</EmptyTitle>
-          <EmptyDescription>There are no orders found.</EmptyDescription>
+          <EmptyTitle>No promotions found</EmptyTitle>
+          <EmptyDescription>There are no promotions found.</EmptyDescription>
         </EmptyHeader>
       </Empty>
     )
@@ -70,9 +72,16 @@ export default function OrdersTab() {
 
   return (
     <div className='space-y-6'>
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-        {orders.map(order => (
-          <AdminOrderCard key={order.id} order={order} />
+      <div className='flex flex-wrap items-center justify-between gap-3'>
+        <p className='text-sm text-muted-foreground'>
+          Manage promotions, discount codes, and shipping campaigns.
+        </p>
+        <CreatePromotionDialog />
+      </div>
+
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
+        {promoList.map(p => (
+          <PromotionCard key={p.id} promotion={p} />
         ))}
       </div>
       {totalPages > 1 && (

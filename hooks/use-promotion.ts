@@ -1,9 +1,11 @@
 import { promotionService } from '@/services/promotion.service'
 import { CreatePromotionDto } from '@/shared/dtos/promotion'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const PROMOTION_QUERY_KEYS = {
   all: ['promotion'] as const,
+  list: (page: number, pageSize: number) =>
+    [...PROMOTION_QUERY_KEYS.all, 'list', page, pageSize] as const,
   create: () => [...PROMOTION_QUERY_KEYS.all, 'create'] as const,
   validate: () => [...PROMOTION_QUERY_KEYS.all, 'validate'] as const,
 }
@@ -11,12 +13,25 @@ const PROMOTION_QUERY_KEYS = {
 export const promotionQueries = {
   keys: PROMOTION_QUERY_KEYS,
 
-  useCreate: () =>
-    useMutation({
+  useGetList: (page: number = 1, pageSize: number = 10) =>
+    useQuery({
+      queryKey: promotionQueries.keys.list(page, pageSize),
+      queryFn: () => promotionService.getPromotions(page, pageSize),
+    }),
+
+  useCreate: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
       mutationKey: promotionQueries.keys.create(),
       mutationFn: (promotion: CreatePromotionDto) =>
         promotionService.createPromotion(promotion),
-    }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: promotionQueries.keys.all,
+        })
+      },
+    })
+  },
 
   useValidate: () =>
     useMutation({

@@ -1,10 +1,11 @@
 'use client'
 
 import OrdersTab from '@/components/admin/orders-tab'
+import PromotionsTab from '@/components/admin/promotions-tab'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { Package, ScrollText, Users } from 'lucide-react'
+import { Package, Percent, ScrollText, Users } from 'lucide-react'
 import { Fragment, useState } from 'react'
 
 const TAB_MENU_ITEMS = [
@@ -13,6 +14,12 @@ const TAB_MENU_ITEMS = [
     value: 'orders',
     icon: <ScrollText className='size-4' />,
     component: <OrdersTab />,
+  },
+  {
+    label: 'Promotions',
+    value: 'promotions',
+    icon: <Percent className='size-4' />,
+    component: <PromotionsTab />,
   },
   {
     label: 'Users',

@@ -18,13 +18,14 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    const sanitizedCode = code.trim().toUpperCase()
+
     const sb = await getSupabaseServerClient()
     const { data: promotion } = await sb
       .from('promotions')
       .select('*')
-      .eq('code', code)
+      .eq('code', sanitizedCode)
       .single()
-    console.log(promotion)
     if (!promotion) {
       return NextResponse.json(generateErrorResponse('Promotion not found'), {
         status: 404,
@@ -37,7 +38,6 @@ export async function POST(req: NextRequest) {
       .eq('promotion_id', promotion.id)
       .eq('user_id', auth.sub)
       .single()
-    console.log(promotionUsage)
     if (promotionUsage) {
       return NextResponse.json(
         generateErrorResponse('Promotion already used'),

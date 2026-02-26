@@ -1,5 +1,5 @@
 export enum PromotionType {
-  PERCENTAGE = 'percentage',
+  DISCOUNT = 'discount',
   FIXED = 'fixed',
-  FREE_SHIPPING = 'free shipping',
+  FREE_SHIPPING = 'free_shipping',
 }

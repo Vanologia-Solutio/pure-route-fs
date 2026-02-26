@@ -8,6 +8,7 @@ import { orderQueries } from '@/hooks/use-order'
 import { promotionQueries } from '@/hooks/use-promotion'
 import { CreateOrderDto } from '@/shared/dtos/order'
 import { PromotionType } from '@/shared/enums/promotion'
+import { roundCurrency } from '@/shared/utils/formatter'
 import { Fragment, SubmitEvent, useCallback, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -18,12 +19,14 @@ function computeDiscount(
 ): number {
   const preDiscountTotal = subtotal + shipmentCost
   switch (promotion.type) {
-    case PromotionType.PERCENTAGE:
-      return Math.min(Math.round((subtotal * promotion.value) / 100), subtotal)
+    case PromotionType.DISCOUNT:
+      return roundCurrency(
+        Math.min((subtotal * promotion.value) / 100, subtotal),
+      )
     case PromotionType.FIXED:
-      return Math.min(promotion.value, preDiscountTotal)
+      return roundCurrency(Math.min(promotion.value, preDiscountTotal))
     case PromotionType.FREE_SHIPPING:
-      return shipmentCost
+      return roundCurrency(shipmentCost)
     default:
       return 0
   }
@@ -61,7 +64,7 @@ export default function CheckoutPage() {
   const discount = promotionDetails
     ? computeDiscount(subtotal, shipmentCost, promotionDetails)
     : 0
-  const total = Math.max(0, subtotal + shipmentCost - discount)
+  const total = roundCurrency(Math.max(0, subtotal + shipmentCost - discount))
 
   const handleApplyPromotion = useCallback(
     async (code: string) => {
