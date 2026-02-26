@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import LoadingSpinner from '../general/loader-spinner'
 import {
@@ -55,6 +56,8 @@ type CartSheetProps = {
 }
 
 export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
+  const router = useRouter()
+
   const { data: cartRes, isLoading, isFetching } = cartQueries.useGetDetails()
 
   const { mutate: updateQty, isPending: isUpdatingQty } =
@@ -324,22 +327,24 @@ export default function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 {formatCurrency(subtotal)}
               </span>
             </div>
-            <Link href='/checkout' onClick={() => onOpenChange(false)}>
-              <Button
-                size='lg'
-                className='w-full bg-green-700 text-white hover:bg-green-800'
-                disabled={
-                  isLoading || isFetching || isRemovingItem || isUpdatingQty
-                }
-              >
-                {isLoading || isFetching || isRemovingItem || isUpdatingQty ? (
-                  <Loader2 className='size-4 animate-spin' />
-                ) : (
-                  <CreditCard className='size-4' />
-                )}
-                Proceed to Checkout
-              </Button>
-            </Link>
+            <Button
+              size='lg'
+              className='w-full bg-green-700 text-white hover:bg-green-800'
+              onClick={() => {
+                onOpenChange(false)
+                router.push('/checkout')
+              }}
+              disabled={
+                isLoading || isFetching || isRemovingItem || isUpdatingQty
+              }
+            >
+              {isLoading || isFetching || isRemovingItem || isUpdatingQty ? (
+                <Loader2 className='size-4 animate-spin' />
+              ) : (
+                <CreditCard className='size-4' />
+              )}
+              Proceed to Checkout
+            </Button>
           </SheetFooter>
         )}
       </SheetContent>

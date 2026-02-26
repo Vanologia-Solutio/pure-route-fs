@@ -19,19 +19,21 @@ export async function GET(req: NextRequest) {
       100,
       Math.max(1, Number(searchParams.get('pageSize') ?? 10)),
     )
+    const keyword = (searchParams.get('keyword') ?? '').trim()
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
     const sb = await getSupabaseServerClient()
-    const {
-      data: promotions,
-      count,
-      error,
-    } = await sb
+    let query = sb
       .from('promotions')
       .select('*', { count: 'exact' })
       .order('id', { ascending: false })
-      .range(from, to)
+
+    if (keyword) {
+      query = query.ilike('code', `%${keyword}%`)
+    }
+
+    const { data: promotions, count, error } = await query.range(from, to)
     if (error) {
       return NextResponse.json(generateErrorResponse(error.message), {
         status: 500,
@@ -57,6 +59,57 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       generateErrorResponse(
         error instanceof Error ? error.message : 'Failed to get promotions',
+      ),
+      {
+        status: 500,
+      },
+    )
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const auth = requireAuth(req)
+    if (isAuthFailed(auth)) return auth
+
+    const { id, isActive } = await req.json()
+    if (!id || typeof isActive !== 'boolean') {
+      return NextResponse.json(
+        generateErrorResponse('Promotion id and isActive are required'),
+        { status: 400 },
+      )
+    }
+
+    const sb = await getSupabaseServerClient()
+    const { data: updatedPromotion, error } = await sb
+      .from('promotions')
+      .update({
+        is_active: isActive,
+        updated_by: auth.sub,
+        last_updated: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('id, is_active')
+      .single()
+    if (error) {
+      return NextResponse.json(generateErrorResponse(error.message), {
+        status: 500,
+      })
+    }
+
+    return NextResponse.json(
+      generateSuccessResponse(
+        {
+          id: updatedPromotion.id,
+          isActive: updatedPromotion.is_active,
+        },
+        'Promotion status updated successfully',
+      ),
+    )
+  } catch (error) {
+    return NextResponse.json(
+      generateErrorResponse(
+        error instanceof Error ? error.message : 'Failed to update promotion',
       ),
       {
         status: 500,

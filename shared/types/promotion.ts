@@ -15,3 +15,11 @@ export interface Promotion {
   description: string | null
   is_active: boolean
 }
+
+export interface ValidatedPromotion {
+  id: number
+  code: string
+  type: PromotionType
+  value: number
+  description: string | null
+}

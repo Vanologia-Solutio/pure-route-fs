@@ -1,15 +1,18 @@
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { PromotionType } from '@/shared/enums/promotion'
 import { Promotion } from '@/shared/types/promotion'
 import { format } from 'date-fns'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, Loader2, Power, PowerOff } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 interface PromotionCardProps {
   promotion: Promotion
+  onToggleStatus: (promotion: Promotion) => void
+  isUpdatingStatus?: boolean
 }
 
 function getValueLabel(type: PromotionType, value: number) {
@@ -24,7 +27,11 @@ function formatDate(value: Date | null) {
   return format(value, 'MMM d, yyyy')
 }
 
-export default function PromotionCard({ promotion }: PromotionCardProps) {
+export default function PromotionCard({
+  promotion,
+  onToggleStatus,
+  isUpdatingStatus = false,
+}: PromotionCardProps) {
   const [isCopied, setIsCopied] = useState<boolean>(false)
 
   const handleCopy = () => {
@@ -41,7 +48,9 @@ export default function PromotionCard({ promotion }: PromotionCardProps) {
       <CardHeader>
         <div className='flex flex-wrap items-center justify-between gap-2'>
           <div className='flex flex-wrap items-center gap-2'>
-            <CardTitle className='text-base'>{promotion.code}</CardTitle>
+            <CardTitle className='text-green-700 text-base'>
+              {promotion.code}
+            </CardTitle>
             <span onClick={handleCopy}>
               {isCopied ? (
                 <Check className='size-3 text-green-700' />
@@ -50,15 +59,42 @@ export default function PromotionCard({ promotion }: PromotionCardProps) {
               )}
             </span>
           </div>
-          <Badge
-            className={cn(
-              promotion.is_active
-                ? 'bg-green-50 text-green-700'
-                : 'bg-red-50 text-red-700',
-            )}
-          >
-            {promotion.is_active ? 'Active' : 'Inactive'}
-          </Badge>
+          <div className='flex items-center gap-1'>
+            <Badge
+              className={cn(
+                promotion.is_active
+                  ? 'bg-green-50 text-green-700'
+                  : 'bg-red-50 text-red-700',
+              )}
+            >
+              {promotion.is_active ? 'Active' : 'Inactive'}
+            </Badge>
+            <Button
+              type='button'
+              variant='ghost'
+              size='icon-xs'
+              onClick={() => onToggleStatus(promotion)}
+              disabled={isUpdatingStatus}
+              title={
+                promotion.is_active
+                  ? 'Deactivate promotion'
+                  : 'Activate promotion'
+              }
+              aria-label={
+                promotion.is_active
+                  ? 'Deactivate promotion'
+                  : 'Activate promotion'
+              }
+            >
+              {isUpdatingStatus ? (
+                <Loader2 className='animate-spin' />
+              ) : promotion.is_active ? (
+                <PowerOff className='text-red-600' />
+              ) : (
+                <Power className='text-green-700' />
+              )}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className='space-y-2 text-xs'>

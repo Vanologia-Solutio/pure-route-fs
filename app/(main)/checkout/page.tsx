@@ -8,6 +8,7 @@ import { orderQueries } from '@/hooks/use-order'
 import { promotionQueries } from '@/hooks/use-promotion'
 import { CreateOrderDto } from '@/shared/dtos/order'
 import { PromotionType } from '@/shared/enums/promotion'
+import { ValidatedPromotion } from '@/shared/types/promotion'
 import { roundCurrency } from '@/shared/utils/formatter'
 import { Fragment, SubmitEvent, useCallback, useState } from 'react'
 import { toast } from 'sonner'
@@ -35,13 +36,8 @@ function computeDiscount(
 export default function CheckoutPage() {
   const [shipmentMethod, setShipmentMethod] = useState<string>('')
   const [paymentMethod, setPaymentMethod] = useState<string>('')
-  const [promotionDetails, setPromotionDetails] = useState<{
-    id: number
-    code: string
-    type: PromotionType
-    value: number
-    description?: string
-  } | null>(null)
+  const [promotionDetails, setPromotionDetails] =
+    useState<ValidatedPromotion | null>(null)
 
   const { data: cartRes, isLoading: isLoadingCart } =
     cartQueries.useGetDetails()

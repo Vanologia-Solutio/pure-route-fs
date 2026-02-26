@@ -3,8 +3,9 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { PromotionType } from '@/shared/enums/promotion'
+import { cn } from '@/lib/utils'
 import { Cart } from '@/shared/types/cart'
+import { ValidatedPromotion } from '@/shared/types/promotion'
 import { formatCurrency } from '@/shared/utils/formatter'
 import { Check, Loader2, X } from 'lucide-react'
 import Image from 'next/image'
@@ -18,15 +19,6 @@ import {
 } from '../ui/accordion'
 import { Separator } from '../ui/separator'
 import { Skeleton } from '../ui/skeleton'
-import { cn } from '@/lib/utils'
-
-interface PromotionDetails {
-  id: number
-  code: string
-  type: PromotionType
-  value: number
-  description?: string
-}
 
 interface OrderSummaryProps {
   items: Cart['products']
@@ -39,7 +31,7 @@ interface OrderSummaryProps {
     isLoading: boolean
   }
   promotion?: {
-    details: PromotionDetails | null
+    details: ValidatedPromotion | null
     isLoading: boolean
     disabled: boolean
     onApply: (code: string) => void
@@ -190,6 +182,7 @@ function PromotionCodeSection({
           name='code'
           placeholder='Promotion code'
           disabled={isDisabled}
+          required
         />
         <Button
           type='submit'
