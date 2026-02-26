@@ -1,10 +1,14 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { PromotionType } from '@/shared/enums/promotion'
 import { Cart } from '@/shared/types/cart'
 import { formatCurrency } from '@/shared/utils/formatter'
+import { Check, Loader2, X } from 'lucide-react'
 import Image from 'next/image'
-import { Fragment } from 'react'
+import { Fragment, SubmitEvent } from 'react'
 import LoadingSpinner from '../general/loader-spinner'
 import {
   Accordion,
@@ -14,15 +18,32 @@ import {
 } from '../ui/accordion'
 import { Separator } from '../ui/separator'
 import { Skeleton } from '../ui/skeleton'
+import { cn } from '@/lib/utils'
+
+interface PromotionDetails {
+  id: number
+  code: string
+  type: PromotionType
+  value: number
+  description?: string
+}
 
 interface OrderSummaryProps {
   items: Cart['products']
   subtotal: number
   shipmentCost: number
+  discount?: number
   total: number
   mobile?: boolean
   states: {
     isLoading: boolean
+  }
+  promotion?: {
+    details: PromotionDetails | null
+    isLoading: boolean
+    disabled: boolean
+    onApply: (code: string) => void
+    onRemove: () => void
   }
 }
 
@@ -30,10 +51,20 @@ export default function OrderSummary({
   items,
   subtotal,
   shipmentCost,
+  discount = 0,
   total,
   mobile = false,
   states,
+  promotion,
 }: OrderSummaryProps) {
+  const promotionSection = promotion ? (
+    <PromotionCodeSection
+      promotion={promotion}
+      compact={mobile}
+      mobile={mobile}
+    />
+  ) : null
+
   if (mobile) {
     return (
       <Accordion
@@ -62,8 +93,10 @@ export default function OrderSummary({
             <SummaryDetails
               subtotal={subtotal}
               shipmentCost={shipmentCost}
+              discount={discount}
               total={total}
             />
+            {promotionSection}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -85,12 +118,89 @@ export default function OrderSummary({
             <SummaryDetails
               subtotal={subtotal}
               shipmentCost={shipmentCost}
+              discount={discount}
               total={total}
             />
+            {promotionSection}
           </Fragment>
         )}
       </CardContent>
     </Card>
+  )
+}
+
+function PromotionCodeSection({
+  promotion,
+  compact,
+  mobile = false,
+}: {
+  promotion: NonNullable<OrderSummaryProps['promotion']>
+  compact?: boolean
+  mobile?: boolean
+}) {
+  const { details, isLoading, disabled, onApply, onRemove } = promotion
+  const isDisabled = disabled || isLoading
+
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const formData = new FormData(form)
+    const code = formData.get('code') as string
+    if (!code.trim()) return
+    onApply(code.trim())
+  }
+
+  if (details) {
+    return (
+      <div className={cn(mobile && 'mt-22')}>
+        <div className='flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-3 py-2'>
+          <div className='flex items-center gap-2 min-w-0'>
+            <Check className='size-4 shrink-0 text-green-700' />
+            <div className='min-w-0 flex-1'>
+              <p className='text-sm font-medium text-green-800 truncate'>
+                {details.code} applied
+              </p>
+              {details.description && !compact && (
+                <p className='text-xs text-muted-foreground truncate'>
+                  {details.description}
+                </p>
+              )}
+            </div>
+          </div>
+          <Button
+            type='button'
+            size='icon'
+            variant='ghost'
+            className='shrink-0 text-red-700 hover:bg-red-100 hover:text-red-900 size-8'
+            disabled={isDisabled}
+            onClick={() => onRemove()}
+          >
+            <X className='size-4' />
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className={cn(mobile && 'mt-2')}>
+      <div className='flex gap-2'>
+        <Input
+          className='flex-1 min-w-0 text-sm'
+          name='code'
+          placeholder='Promotion code'
+          disabled={isDisabled}
+        />
+        <Button
+          type='submit'
+          size='sm'
+          className='shrink-0'
+          disabled={isDisabled}
+        >
+          {isLoading ? <Loader2 className='size-4 animate-spin' /> : 'Apply'}
+        </Button>
+      </div>
+    </form>
   )
 }
 
@@ -129,10 +239,12 @@ function ItemsList({ items }: { items: Cart['products'] }) {
 function SummaryDetails({
   subtotal,
   shipmentCost,
+  discount = 0,
   total,
 }: {
   subtotal: number
   shipmentCost: number
+  discount?: number
   total: number
 }) {
   return (
@@ -149,6 +261,14 @@ function SummaryDetails({
           {formatCurrency(shipmentCost)}
         </span>
       </div>
+      {discount > 0 && (
+        <div className='flex justify-between text-green-700'>
+          <span className='text-xs sm:text-sm'>Discount</span>
+          <span className='font-semibold text-sm sm:text-base'>
+            -{formatCurrency(discount)}
+          </span>
+        </div>
+      )}
       <div className='border-t border-slate-200 pt-3'>
         <div className='flex justify-between'>
           <span className='font-semibold text-base sm:text-lg'>Total</span>

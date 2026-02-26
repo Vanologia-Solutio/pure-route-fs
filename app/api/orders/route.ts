@@ -2,6 +2,7 @@ import { sendOrderEmail } from '@/lib/mailer'
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import { Env } from '@/shared/constants/environments'
 import { EmailTemplate } from '@/shared/enums/email-template'
+import { PromotionType } from '@/shared/enums/promotion'
 import { CartStatus, OrderStatus } from '@/shared/enums/status'
 import {
   generateErrorResponse,
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
       paymentMethod,
       phone,
       postalCode,
+      promotionId,
       recipientName,
       shipmentMethod,
       state,
@@ -130,7 +132,36 @@ export async function POST(req: NextRequest) {
       (acc, item) => acc + item.products.price * item.quantity,
       0,
     )
-    const totalAmount = subtotalAmount + shipmentMethodFee
+
+    let totalAmount = subtotalAmount + shipmentMethodFee
+    let discountAmount = 0
+
+    if (promotionId) {
+      const { data: promotion } = await sb
+        .from('promotions')
+        .select('id, type, value')
+        .eq('id', promotionId)
+        .single()
+      if (promotion) {
+        const preDiscountTotal = subtotalAmount + shipmentMethodFee
+        switch (promotion.type as PromotionType) {
+          case PromotionType.PERCENTAGE:
+            discountAmount = Math.min(
+              Math.round((subtotalAmount * promotion.value) / 100),
+              subtotalAmount,
+            )
+            break
+          case PromotionType.FIXED:
+            discountAmount = Math.min(promotion.value, preDiscountTotal)
+            break
+          case PromotionType.FREE_SHIPPING:
+            discountAmount = shipmentMethodFee
+            break
+        }
+        totalAmount = Math.max(0, preDiscountTotal - discountAmount)
+      }
+    }
+
     const orderCode = `ORD-${Date.now()}`
 
     const { data: newOrder, error: newOrderError } = await sb
@@ -149,6 +180,8 @@ export async function POST(req: NextRequest) {
         delivery_fee_snapshot: shipmentMethodFee,
         payment_method_id: paymentMethod,
         subtotal_amount: subtotalAmount,
+        promotion_id: promotionId || null,
+        discount_amount: discountAmount || 0,
         total_amount: totalAmount,
         status: OrderStatus.PENDING,
         code: orderCode,
@@ -177,6 +210,23 @@ export async function POST(req: NextRequest) {
     if (insertOrderItemsError) {
       return NextResponse.json(
         generateErrorResponse(insertOrderItemsError.message),
+        { status: 500 },
+      )
+    }
+
+    const { error: insertPromotionUsageError } = await sb
+      .from('promotion_usages')
+      .insert([
+        {
+          user_id: auth.sub,
+          promotion_id: promotionId,
+          order_id: newOrder.id,
+          created_by: auth.sub,
+        },
+      ])
+    if (insertPromotionUsageError) {
+      return NextResponse.json(
+        generateErrorResponse(insertPromotionUsageError.message),
         { status: 500 },
       )
     }

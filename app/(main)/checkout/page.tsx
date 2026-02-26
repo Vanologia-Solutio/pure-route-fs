@@ -5,13 +5,40 @@ import OrderSummary from '@/components/orders/order-summary'
 import { cartQueries } from '@/hooks/use-cart'
 import { masterDataQueries } from '@/hooks/use-master-data'
 import { orderQueries } from '@/hooks/use-order'
+import { promotionQueries } from '@/hooks/use-promotion'
 import { CreateOrderDto } from '@/shared/dtos/order'
-import { Fragment, SubmitEvent, useState } from 'react'
+import { PromotionType } from '@/shared/enums/promotion'
+import { Fragment, SubmitEvent, useCallback, useState } from 'react'
 import { toast } from 'sonner'
+
+function computeDiscount(
+  subtotal: number,
+  shipmentCost: number,
+  promotion: { type: PromotionType; value: number },
+): number {
+  const preDiscountTotal = subtotal + shipmentCost
+  switch (promotion.type) {
+    case PromotionType.PERCENTAGE:
+      return Math.min(Math.round((subtotal * promotion.value) / 100), subtotal)
+    case PromotionType.FIXED:
+      return Math.min(promotion.value, preDiscountTotal)
+    case PromotionType.FREE_SHIPPING:
+      return shipmentCost
+    default:
+      return 0
+  }
+}
 
 export default function CheckoutPage() {
   const [shipmentMethod, setShipmentMethod] = useState<string>('')
   const [paymentMethod, setPaymentMethod] = useState<string>('')
+  const [promotionDetails, setPromotionDetails] = useState<{
+    id: number
+    code: string
+    type: PromotionType
+    value: number
+    description?: string
+  } | null>(null)
 
   const { data: cartRes, isLoading: isLoadingCart } =
     cartQueries.useGetDetails()
@@ -24,12 +51,40 @@ export default function CheckoutPage() {
   const paymentMethods = paymentMethodsRes?.data ?? []
   const { mutateAsync: createOrder, isPending: isLoadingCreateOrder } =
     orderQueries.useCreate()
+  const { mutateAsync: validatePromotion, isPending: isPromotionLoading } =
+    promotionQueries.useValidate()
 
   const subtotal =
     items.reduce((sum, item) => sum + item.price * item.quantity, 0) ?? 0
   const shipmentCost =
     shipmentMethods.find(m => m.id === Number(shipmentMethod))?.fee ?? 0
-  const total = subtotal + shipmentCost
+  const discount = promotionDetails
+    ? computeDiscount(subtotal, shipmentCost, promotionDetails)
+    : 0
+  const total = Math.max(0, subtotal + shipmentCost - discount)
+
+  const handleApplyPromotion = useCallback(
+    async (code: string) => {
+      const trimmed = code.trim()
+      if (!trimmed) return
+      try {
+        const res = await validatePromotion(trimmed)
+        if (res.success && res.data) {
+          setPromotionDetails(res.data)
+          toast.success('Promotion applied successfully')
+        }
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : 'Invalid promotion code',
+        )
+      }
+    },
+    [validatePromotion],
+  )
+
+  const handleRemovePromotion = useCallback(() => {
+    setPromotionDetails(null)
+  }, [])
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -39,6 +94,7 @@ export default function CheckoutPage() {
       ...Object.fromEntries(formData.entries()),
       shipmentMethod,
       paymentMethod,
+      ...(promotionDetails && { promotionId: String(promotionDetails.id) }),
     } as CreateOrderDto
 
     try {
@@ -62,9 +118,21 @@ export default function CheckoutPage() {
           items={items}
           subtotal={subtotal}
           shipmentCost={shipmentCost}
+          discount={discount}
           total={total}
           mobile
           states={{ isLoading: isLoadingCart }}
+          promotion={{
+            details: promotionDetails,
+            isLoading: isPromotionLoading,
+            disabled:
+              isLoadingCart ||
+              isLoadingPaymentMethods ||
+              isLoadingShipmentMethods ||
+              isLoadingCreateOrder,
+            onApply: handleApplyPromotion,
+            onRemove: handleRemovePromotion,
+          }}
         />
       </div>
 
@@ -92,8 +160,20 @@ export default function CheckoutPage() {
             items={items}
             subtotal={subtotal}
             shipmentCost={shipmentCost}
+            discount={discount}
             total={total}
             states={{ isLoading: isLoadingCart }}
+            promotion={{
+              details: promotionDetails,
+              isLoading: isPromotionLoading,
+              disabled:
+                isLoadingCart ||
+                isLoadingPaymentMethods ||
+                isLoadingShipmentMethods ||
+                isLoadingCreateOrder,
+              onApply: handleApplyPromotion,
+              onRemove: handleRemovePromotion,
+            }}
           />
         </div>
       </div>

@@ -25,6 +25,9 @@ export interface Order {
   user_id: number
   subtotal_amount: number
   delivery_fee_snapshot: number
+  promotion_id?: number
+  discount_amount?: number
+  promotion?: { code: string; type: string; value: number } | null
   total_amount: number
   payment_method: string
   shipment_method: string
@@ -41,4 +44,19 @@ export interface Order {
   created_by: number
   last_updated: string | null
   updated_by: number | null
+}
+
+export type AdminOrderListItem = {
+  id: number
+  code: string
+  status: string
+  total_amount: number
+  creation_date: string
+  recipient_name: string
+  contact_info: string
+  country: string
+  address: string
+  city: string
+  state: string
+  postal_code: string
 }

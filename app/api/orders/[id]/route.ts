@@ -20,7 +20,9 @@ export async function GET(
 
     const { data: order } = await sb
       .from('orders')
-      .select('*, shipment_methods!inner(code), payment_methods!inner(name)')
+      .select(
+        '*, shipment_methods!inner(code), payment_methods!inner(name), promotions(code, type, value)',
+      )
       .eq('id', id)
       .single()
     if (!order) {
@@ -43,6 +45,13 @@ export async function GET(
       ...order,
       shipment_method: order.shipment_methods.code,
       payment_method: order.payment_methods.name,
+      promotion: order.promotions
+        ? {
+            code: order.promotions.code,
+            type: order.promotions.type,
+            value: order.promotions.value,
+          }
+        : null,
       items: orderItems.map(item => ({
         ...item,
         file_path: item.products.file_path,

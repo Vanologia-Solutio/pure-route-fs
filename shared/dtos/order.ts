@@ -9,4 +9,5 @@ export interface CreateOrderDto {
   recipientName: string
   shipmentMethod: string
   state: string
+  promotionId?: string
 }

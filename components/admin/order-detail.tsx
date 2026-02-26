@@ -179,6 +179,17 @@ export default function AdminOrderDetail({ order }: AdminOrderDetailProps) {
                   {formatCurrency(order.delivery_fee_snapshot)}
                 </span>
               </div>
+              {(order.discount_amount ?? 0) > 0 && (
+                <div className='flex justify-between text-sm text-green-700'>
+                  <span>
+                    Discount
+                    {order.promotion?.code ? ` (${order.promotion.code})` : ''}
+                  </span>
+                  <span className='font-medium'>
+                    -{formatCurrency(order.discount_amount ?? 0)}
+                  </span>
+                </div>
+              )}
               <div className='border-t border-slate-200 pt-3 dark:border-slate-800'>
                 <div className='flex justify-between'>
                   <span className='font-semibold'>Total</span>

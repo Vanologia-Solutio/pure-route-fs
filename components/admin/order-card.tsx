@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { AdminOrderListItem } from '@/services/admin-order-service'
+import type { AdminOrderListItem } from '@/shared/types/order'
 import {
   formatCurrency,
   formatDateTime,

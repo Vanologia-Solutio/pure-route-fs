@@ -22,7 +22,9 @@ export async function GET(
 
     const { data: order, error: orderError } = await sb
       .from('orders')
-      .select('*, shipment_methods!inner(code), payment_methods!inner(name)')
+      .select(
+        '*, shipment_methods!inner(code), payment_methods!inner(name), promotions(code, type, value)',
+      )
       .eq('id', id)
       .single()
 
@@ -48,6 +50,14 @@ export async function GET(
       ...order,
       shipment_method: order.shipment_methods.code,
       payment_method: order.payment_methods.name,
+      promotion: order.promotions
+        ? {
+            code: order.promotions.code,
+            type: order.promotions.type,
+            value: order.promotions.value,
+            description: order.promotions.description,
+          }
+        : null,
       items,
     }
 

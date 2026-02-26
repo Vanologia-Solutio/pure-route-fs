@@ -3,26 +3,12 @@ import {
   generateErrorResponse,
   generatePaginatedResponse,
 } from '@/shared/helpers/api-response'
+import type { AdminOrderListItem } from '@/shared/types/order'
 import { isAuthFailed, requireAdmin } from '@/shared/utils/auth'
 import { NextRequest, NextResponse } from 'next/server'
 
 const DEFAULT_PAGE_SIZE = 10
 const MAX_PAGE_SIZE = 50
-
-export type AdminOrderListItem = {
-  id: number
-  code: string
-  status: string
-  total_amount: number
-  creation_date: string
-  recipient_name: string
-  contact_info: string
-  country: string
-  address: string
-  city: string
-  state: string
-  postal_code: string
-}
 
 export async function GET(req: NextRequest) {
   const auth = requireAdmin(req)

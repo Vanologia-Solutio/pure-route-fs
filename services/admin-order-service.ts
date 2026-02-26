@@ -1,22 +1,6 @@
-import { ApiResponse } from '@/shared/helpers/api-response'
-import { PaginatedResponse } from '@/shared/helpers/api-response'
-import { Order } from '@/shared/types/order'
+import { ApiResponse, PaginatedResponse } from '@/shared/helpers/api-response'
+import { AdminOrderListItem, Order } from '@/shared/types/order'
 import { getToken } from '@/shared/utils/token'
-
-export type AdminOrderListItem = {
-  id: number
-  code: string
-  status: string
-  total_amount: number
-  creation_date: string
-  recipient_name: string
-  contact_info: string
-  country: string
-  address: string
-  city: string
-  state: string
-  postal_code: string
-}
 
 export class AdminOrderService {
   private headers() {
