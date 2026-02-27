@@ -27,13 +27,17 @@ export default function Hero() {
               <Link href='/shop'>
                 <Button
                   size='lg'
-                  className='bg-green-700 text-white hover:bg-green-800 gap-2'
+                  className='bg-green-700 text-white hover:bg-green-800 gap-2 w-full sm:w-auto'
                 >
                   Go to Shop <ArrowRight className='size-4' />
                 </Button>
               </Link>
               <Link href='/faq'>
-                <Button size='lg' variant='outline'>
+                <Button
+                  size='lg'
+                  variant='outline'
+                  className='w-full sm:w-auto'
+                >
                   Learn More
                 </Button>
               </Link>

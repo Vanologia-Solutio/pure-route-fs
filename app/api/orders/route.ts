@@ -253,23 +253,25 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const { error: emailError } = await sendOrderEmail(
-      email,
-      'Thank you for your order',
-      EmailTemplate.PAYMENT,
-      {
-        customerName: recipientName,
-        orderNumber: orderCode,
-        orderDate: formatDateTime(newOrder.creation_date),
-        paymentMethod: paymentMethodData.name,
-        paymentIdentity,
-        orderUrl: `${Env.APP_URL}/callback?redirect_url=/orders/${newOrder.id}`,
-      },
-    )
-    if (emailError) {
-      return NextResponse.json(generateErrorResponse(emailError.message), {
-        status: 500,
-      })
+    if (Env.APP_ENV !== 'development') {
+      const { error: emailError } = await sendOrderEmail(
+        email,
+        'Thank you for your order',
+        EmailTemplate.PAYMENT,
+        {
+          customerName: recipientName,
+          orderNumber: orderCode,
+          orderDate: formatDateTime(newOrder.creation_date),
+          paymentMethod: paymentMethodData.name,
+          paymentIdentity,
+          orderUrl: `${Env.APP_URL}/callback?redirect_url=/orders/${newOrder.id}`,
+        },
+      )
+      if (emailError) {
+        return NextResponse.json(generateErrorResponse(emailError.message), {
+          status: 500,
+        })
+      }
     }
 
     return NextResponse.json(

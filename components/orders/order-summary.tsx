@@ -50,11 +50,7 @@ export default function OrderSummary({
   promotion,
 }: OrderSummaryProps) {
   const promotionSection = promotion ? (
-    <PromotionCodeSection
-      promotion={promotion}
-      compact={mobile}
-      mobile={mobile}
-    />
+    <PromotionCodeSection promotion={promotion} mobile={mobile} />
   ) : null
 
   if (mobile) {
@@ -123,11 +119,9 @@ export default function OrderSummary({
 
 function PromotionCodeSection({
   promotion,
-  compact,
   mobile = false,
 }: {
   promotion: NonNullable<OrderSummaryProps['promotion']>
-  compact?: boolean
   mobile?: boolean
 }) {
   const { details, isLoading, disabled, onApply, onRemove } = promotion
@@ -144,16 +138,16 @@ function PromotionCodeSection({
 
   if (details) {
     return (
-      <div className={cn(mobile && 'mt-22')}>
+      <div className={cn(mobile && 'mt-2')}>
         <div className='flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-3 py-2'>
           <div className='flex items-center gap-2 min-w-0'>
             <Check className='size-4 shrink-0 text-green-700' />
             <div className='min-w-0 flex-1'>
-              <p className='text-sm font-medium text-green-800 truncate'>
+              <p className='text-sm font-medium text-green-800 truncate line-clamp-1'>
                 {details.code} applied
               </p>
-              {details.description && !compact && (
-                <p className='text-xs text-muted-foreground truncate'>
+              {details.description && (
+                <p className='text-xs text-muted-foreground truncate line-clamp-1'>
                   {details.description}
                 </p>
               )}
