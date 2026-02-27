@@ -3,8 +3,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const ADMIN_ORDER_QUERY_KEYS = {
   all: ['admin', 'order'] as const,
-  list: (page: number, pageSize: number) =>
-    [...ADMIN_ORDER_QUERY_KEYS.all, 'list', page, pageSize] as const,
+  list: (page: number, pageSize: number, keyword: string, status: string) =>
+    [
+      ...ADMIN_ORDER_QUERY_KEYS.all,
+      'list',
+      page,
+      pageSize,
+      keyword,
+      status,
+    ] as const,
   detail: (id: string) =>
     [...ADMIN_ORDER_QUERY_KEYS.all, 'detail', id] as const,
 }
@@ -12,10 +19,16 @@ const ADMIN_ORDER_QUERY_KEYS = {
 export const adminOrderQueries = {
   keys: ADMIN_ORDER_QUERY_KEYS,
 
-  useGetOrdersPaginated: (page: number = 1, pageSize: number = 10) =>
+  useGetOrdersPaginated: (
+    page: number = 1,
+    pageSize: number = 10,
+    keyword: string = '',
+    status: string = 'all',
+  ) =>
     useQuery({
-      queryKey: adminOrderQueries.keys.list(page, pageSize),
-      queryFn: () => adminOrderService.getOrdersPaginated(page, pageSize),
+      queryKey: adminOrderQueries.keys.list(page, pageSize, keyword, status),
+      queryFn: () =>
+        adminOrderService.getOrdersPaginated(page, pageSize, keyword, status),
     }),
 
   useGetOrderById: (id: string) =>

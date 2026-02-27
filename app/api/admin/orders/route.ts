@@ -21,23 +21,32 @@ export async function GET(req: NextRequest) {
       MAX_PAGE_SIZE,
       Math.max(1, Number(searchParams.get('pageSize')) || DEFAULT_PAGE_SIZE),
     )
+    const keyword = (searchParams.get('keyword') ?? '').trim()
+    const status = (searchParams.get('status') ?? 'all').trim()
 
     const sb = await getSupabaseServerClient()
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
-    const {
-      data: orders,
-      error,
-      count,
-    } = await sb
+    let query = sb
       .from('orders')
       .select(
         'id, code, status, total_amount, creation_date, recipient_name, contact_info, country, address, city, state, postal_code',
         { count: 'exact' },
       )
       .order('id', { ascending: false })
-      .range(from, to)
+
+    if (keyword) {
+      query = query.or(
+        `code.ilike.%${keyword}%,recipient_name.ilike.%${keyword}%,contact_info.ilike.%${keyword}%`,
+      )
+    }
+
+    if (status && status !== 'all') {
+      query = query.eq('status', status)
+    }
+
+    const { data: orders, error, count } = await query.range(from, to)
 
     if (error) {
       return NextResponse.json(generateErrorResponse(error.message), {

@@ -143,13 +143,13 @@ export default function CreatePromotionDialog() {
       <DialogTrigger asChild>
         <Button
           type='button'
-          className='bg-green-700 text-white hover:bg-green-800'
+          className='bg-green-700 text-white hover:bg-green-800 w-full sm:w-auto'
         >
           <Plus className='size-4' />
           Add Promo Code
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className='max-h-3/4 overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Create Promotion</DialogTitle>
           <DialogDescription>

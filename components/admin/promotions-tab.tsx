@@ -106,7 +106,7 @@ export default function PromotionsTab() {
               ? 'No promotions found'
               : 'Search promo code...'
           }
-          className='max-w-xs'
+          className='w-full sm:max-w-sm'
         />
         <CreatePromotionDialog />
       </div>

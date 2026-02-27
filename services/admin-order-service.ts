@@ -10,11 +10,19 @@ export class AdminOrderService {
   async getOrdersPaginated(
     page: number = 1,
     pageSize: number = 10,
+    keyword: string = '',
+    status: string = 'all',
   ): Promise<PaginatedResponse<AdminOrderListItem>> {
     const params = new URLSearchParams({
       page: String(page),
       pageSize: String(pageSize),
     })
+    if (keyword.trim()) {
+      params.set('keyword', keyword.trim())
+    }
+    if (status !== 'all') {
+      params.set('status', status)
+    }
     const res = await fetch(`/api/admin/orders?${params}`, {
       method: 'GET',
       headers: {
