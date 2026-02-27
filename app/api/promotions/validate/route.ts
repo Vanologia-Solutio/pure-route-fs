@@ -4,6 +4,7 @@ import {
   generateSuccessResponse,
 } from '@/shared/helpers/api-response'
 import { isAuthFailed, requireAuth } from '@/shared/utils/auth'
+import { format } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const sanitizedCode = code.trim().toUpperCase()
-    const today = new Date().toISOString().slice(0, 10)
+    const today = format(new Date(), 'yyyy-MM-dd')
 
     const sb = await getSupabaseServerClient()
     const { data: promotion } = await sb
