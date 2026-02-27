@@ -4,7 +4,7 @@ import {
   generateErrorResponse,
   generateSuccessResponse,
 } from '@/shared/helpers/api-response'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { NextRequest, NextResponse } from 'next/server'
 

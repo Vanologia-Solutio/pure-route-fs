@@ -3,7 +3,7 @@ import {
   generateErrorResponse,
   generateSuccessResponse,
 } from '@/shared/helpers/api-response'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
