@@ -36,6 +36,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { promotionQueries } from '@/hooks/use-promotion'
 import { CreatePromotionDto } from '@/shared/dtos/promotion'
 import { PromotionType } from '@/shared/enums/promotion'
+import { parseDate, startOfDay, toDateValue } from '@/shared/utils/formatter'
 import { format } from 'date-fns'
 import { CalendarIcon, Loader2, Plus, Truck } from 'lucide-react'
 import { type SubmitEvent, useRef, useState } from 'react'
@@ -48,16 +49,26 @@ function valueSuffix(type: PromotionType) {
   return '-'
 }
 
-function parseDate(dateValue: string) {
-  if (!dateValue) return undefined
-  const parsed = new Date(dateValue)
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed
-}
+// function parseDate(dateValue: string) {
+//   if (!dateValue) return undefined
+//   const [year, month, day] = dateValue.split('-').map(Number)
+//   const parsed =
+//     Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)
+//       ? new Date(year, month - 1, day)
+//       : new Date(dateValue)
+//   return Number.isNaN(parsed.getTime()) ? undefined : parsed
+// }
 
-function toDateValue(date?: Date) {
-  if (!date) return ''
-  return format(date, 'yyyy-MM-dd')
-}
+// function toDateValue(date?: Date) {
+//   if (!date) return ''
+//   return format(date, 'yyyy-MM-dd')
+// }
+
+// function startOfDay(date: Date) {
+//   const normalized = new Date(date)
+//   normalized.setHours(0, 0, 0, 0)
+//   return normalized
+// }
 
 export default function CreatePromotionDialog() {
   const { mutateAsync: createPromotion, isPending: isCreatingPromotion } =
@@ -70,6 +81,10 @@ export default function CreatePromotionDialog() {
   const [startsAtValue, setStartsAtValue] = useState('')
   const [expiresAtValue, setExpiresAtValue] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const startsAtMaxDate = parseDate(expiresAtValue)
+  const expiresAtMinDate = parseDate(startsAtValue) ?? today
 
   const isFreeShipping = selectedType === PromotionType.FREE_SHIPPING
 
@@ -237,6 +252,11 @@ export default function CreatePromotionDialog() {
                   <Calendar
                     mode='single'
                     selected={parseDate(startsAtValue)}
+                    disabled={date =>
+                      startOfDay(date) < today ||
+                      (!!startsAtMaxDate &&
+                        startOfDay(date) > startOfDay(startsAtMaxDate))
+                    }
                     onSelect={date => {
                       const nextStartsAt = toDateValue(date)
                       const startsAtInput = formRef.current?.elements.namedItem(
@@ -276,6 +296,9 @@ export default function CreatePromotionDialog() {
                   <Calendar
                     mode='single'
                     selected={parseDate(expiresAtValue)}
+                    disabled={date =>
+                      startOfDay(date) < startOfDay(expiresAtMinDate)
+                    }
                     onSelect={date => {
                       const expiresAtInput =
                         formRef.current?.elements.namedItem(
@@ -321,7 +344,10 @@ export default function CreatePromotionDialog() {
             <Button
               type='button'
               variant='outline'
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                resetStates()
+                setOpen(false)
+              }}
               disabled={isCreatingPromotion}
             >
               Cancel

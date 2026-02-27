@@ -19,15 +19,19 @@ export async function POST(req: NextRequest) {
     }
 
     const sanitizedCode = code.trim().toUpperCase()
+    const today = new Date().toISOString().slice(0, 10)
 
     const sb = await getSupabaseServerClient()
     const { data: promotion } = await sb
       .from('promotions')
       .select('*')
       .eq('code', sanitizedCode)
+      .eq('is_active', true)
+      .or(`starts_at.is.null,starts_at.lte.${today}`)
+      .or(`expires_at.is.null,expires_at.gte.${today}`)
       .single()
     if (!promotion) {
-      return NextResponse.json(generateErrorResponse('Promotion not found'), {
+      return NextResponse.json(generateErrorResponse('Invalid promo code'), {
         status: 404,
       })
     }
@@ -40,7 +44,7 @@ export async function POST(req: NextRequest) {
       .single()
     if (promotionUsage) {
       return NextResponse.json(
-        generateErrorResponse('Promotion already used'),
+        generateErrorResponse('Promo code already used'),
         {
           status: 400,
         },

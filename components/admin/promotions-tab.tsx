@@ -19,7 +19,6 @@ import { toast } from 'sonner'
 import LoadingSpinner from '../general/loader-spinner'
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -99,9 +98,14 @@ export default function PromotionsTab() {
     <div className='space-y-6'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
         <Input
+          disabled={promoList.length === 0 && !isFetchingPromotions}
           value={keywordInput}
           onChange={e => setKeywordInput(e.target.value)}
-          placeholder='Search promo code...'
+          placeholder={
+            promoList.length === 0 && !isFetchingPromotions
+              ? 'No promotions found'
+              : 'Search promo code...'
+          }
           className='max-w-xs'
         />
         <CreatePromotionDialog />
@@ -118,9 +122,6 @@ export default function PromotionsTab() {
               Try another keyword or create a new promotion.
             </EmptyDescription>
           </EmptyHeader>
-          <EmptyContent>
-            <CreatePromotionDialog />
-          </EmptyContent>
         </Empty>
       ) : (
         <Fragment>

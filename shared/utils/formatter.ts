@@ -1,5 +1,6 @@
 import { KeyboardEvent } from 'react'
 import { OrderStatus } from '../enums/status'
+import { format } from 'date-fns'
 
 export function formatFullName(firstName: string, lastName: string): string {
   return `${firstName} ${lastName}`.trim()
@@ -124,4 +125,25 @@ export function statusVariantClassName(status: string): string {
     default:
       return 'bg-neutral-500/10 text-neutral-700'
   }
+}
+
+export function parseDate(dateValue: string) {
+  if (!dateValue) return undefined
+  const [year, month, day] = dateValue.split('-').map(Number)
+  const parsed =
+    Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)
+      ? new Date(year, month - 1, day)
+      : new Date(dateValue)
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed
+}
+
+export function toDateValue(date?: Date) {
+  if (!date) return ''
+  return format(date, 'yyyy-MM-dd')
+}
+
+export function startOfDay(date: Date) {
+  const normalized = new Date(date)
+  normalized.setHours(0, 0, 0, 0)
+  return normalized
 }
